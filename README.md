@@ -2,11 +2,11 @@
 
 Subtext is a text-based, block-oriented hypertext format. It is designed with note-taking in mind. It has a simple, people-friendly syntax with a passing resemblance to Markdown.
 
-**See [Speculative Specification](specification.md)**.
+**See the [Speculative Specification](specification.md)**.
 
 We're experimenting with Subtext as part of [Subconscious](https://subconscious.substack.com/), a new tool for thought.
 
-**Warning to implementors**: Subtext is currently experimental status.  We'll be spending some time living with Subtext and building experimental tools on top of it, before committing to anything. The language design is just a hypothesis! It might undergo radical breaking change! This is work in progress, and shared in the spirit of working with the garage door open.
+**Warning to implementors**: Subtext is currently experimental status.  We'll be spending some time living with Subtext and building experimental tools on top of it before committing to anything. The language design is just a hypothesis! It might undergo radical breaking changes! This is work in progress, and shared in the spirit of working with the garage door open.
 
 ## A bit of Subtext
 
@@ -42,7 +42,7 @@ Like a stack of index cards, there are many ways to use Subtext, beyond simple l
 
 ## Subtext is block-oriented
 
-Subtext represents _block-oriented documents_ as _line-oriented markup_.
+Subtext represents _block-oriented documents_ as _line-oriented markup_.
 
 A block-oriented document is made up of a list of blocks of different types (or occasionally, a tree of blocks). Each block type may be displayed differently. For example, a quote block may render as quote-formatted text, while an image block may render an image in-place.
 
@@ -75,9 +75,9 @@ This keeps Subtext simple. Rather than extending the syntax of Subtext to includ
 
 ## One of the many attempts of nature to evolve a Xanadu
 
-By an accident of convergent evolution, Subtext happens to have some similarities to Ted Nelson's ELF format (Nelson, 1965).
+By an accident of convergent evolution, Subtext haveappens to have some similarities to Ted Nelson's ELF format (Nelson, 1965).
 
-![Ted Nelson “A File Structure for the Complex, the Changing, and the Indeterminate”, 1965](assets/elf.png)
+![Ted Nelson “A File Structure for the Complex, the Changing, and the Indeterminate”, 1965](./assets/elf.png)
 
 Like ELF, Subtext documents are made up of a list of small blocks. Also like ELF, links are transcluded. Big documents can be composed by linking to small documents.
 
@@ -97,6 +97,8 @@ Subtext is an attempt to resolve the problem by radically simplifying it. Parado
 
 The syntax is also simple, and hard to mess up, and I’m happy about that, too.
 
-## Questions?
+## Project links
 
-Check out the [FAQ](faq.md).
+- [Specification](specification.md)
+- [FAQ](faq.md)
+- [Design principles](design.md)
