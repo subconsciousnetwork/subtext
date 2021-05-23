@@ -2,9 +2,9 @@
 
 ## Speculative specification
 
-**Version**: 2021.05.22.dev  
-**Status**: Draft  
-**Authors**: Gordon Brander  
+- **Version**: 2021.05.23.dev
+- **Status**: Draft
+- **Authors**: Gordon Brander
 
 This is a rough sketch of an actual spec for Subtext. It is becoming increasingly less rough over multiple passes. This doc is being shared in the spirit of working with the garage door open. Feedback is welcome!
 
@@ -197,6 +197,7 @@ The following sigils are reserved for possible future use:
 - `\ `
 - `λ `
 - `\s\s` (two or more contiguous literal space characters leading a line)
+- `\t` (horizontal tab character)
 - `---`
 
 Note, again, that the sigil includes the space character.
