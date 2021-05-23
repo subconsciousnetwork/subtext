@@ -194,8 +194,8 @@ The following sigils are reserved for possible future use:
 - `= `
 - `\ `
 - `λ `
-- `\s\s` (two or more contiguous literal space characters leading a line)
-- `\t` (horizontal tab character)
+- `\s\s` (two or more contiguous space characters leading a line)
+- `\t` (one or more contiguous horizontal tab characters leading a line)
 - `---`
 
 Note, again, that the sigil includes the space character.
