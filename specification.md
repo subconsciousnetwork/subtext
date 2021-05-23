@@ -217,7 +217,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 ## Appendix 2: Further Resources
 
-- [Subtext overview and motivation](README.md).
+- [Subtext overview and motivation](README.md)
 - [FAQ](faq.md)
 - [Future language explorations](./explorations/): this section is non-normative and exploratory. It captures some thinking about possible language additions or alternatives.
 - [Subtext parsers](./parsers/): code you can use to parse and work with Subtext.
@@ -239,7 +239,7 @@ By an accident of convergent evolution, Subtext happens to have some structural 
 
 #### Project Gemini
 
-[Gemini](https://gemini.circumlunar.space/) is an internet protocol which aims to be "heavier than gopher and lighter than the web." [Gemini features a line-oriented markup language](https://gemini.circumlunar.space/docs/specification.gmi).
+[Gemini](https://gemini.circumlunar.space/) is an internet protocol which aims to be "heavier than Gopher and lighter than the web." [Gemini features a line-oriented markup language](https://gemini.circumlunar.space/docs/specification.gmi).
 
 I discovered Gemini about a month after roughing out the outline for Subtext. I was excited about the idea of a minimal line-oriented syntax. Gemini gave me further confidence that line-orientated markup could be a solid basis for a hypertext format.
 
