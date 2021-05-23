@@ -215,7 +215,7 @@ Subtext is valid plain text and plain text is, in most cases, valid Subtext. In 
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
 
-## Appendix 2: Notes and References
+## Appendix 2: Notes
 
 ### Motivation
 
@@ -236,6 +236,8 @@ Linear, block-oriented formats are like shipping containers for discrete thought
 
 - [Hypertext Montage](https://subconscious.substack.com/p/hypertext-montage)
 - [Thought Legos](https://subconscious.substack.com/p/thought-legos)
+
+## Appendix 3: References
 
 ### Prior art
 
