@@ -93,7 +93,7 @@ At the same time, I began to write small generative programs that worked with th
 
 Here, I started to run into limitations with Markdown and HTML. As a complex publishing format, it is unclear how to meaningfully decompose or merge Markdown/HTML documents. When you combine documents, heading levels may need to be changed, lists may need to be flattened or nested. Because the document format is complex, foreknowledge of the meaning of the document is necessary to make meaningful changes. That limits what you can do with software.
 
-Subtext is an attempt to resolve the problem by radically simplifying it. Paradoxically, by limiting the format to a flat list of blocks, we radically expand what software can do with it. Blocks are easy to parse, easy to work with, and you can do all sorts of interesting generative algorithmic things with them.
+Subtext is an attempt to resolve the problem by radically simplifying it. Paradoxically, by limiting the format to a flat list of blocks, we radically expand what software can usefully do with it. Blocks are easy to parse, easy to work with, and you can do all sorts of interesting generative algorithmic things with them.
 
 The syntax is also simple, and hard to mess up, and I’m happy about that, too.
 

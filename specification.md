@@ -215,27 +215,15 @@ Subtext is valid plain text and plain text is, in most cases, valid Subtext. In 
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
 
-## Appendix 2: Notes
+## Appendix 2: Further Resources
 
-### Motivation
-
-Subtext evolved out personal experiments with plain-text note-taking, spanning 10 years and 10k notes. Many of these notes were written in Markdown. However, with time, I noticed that the markup needs of note-taking are different from those of publishing. My note-taking style converged on a small subset of Markdown's features: text, links, lists, quotes, and one level of heading. To have more may be useful for publishing, but is often overkill for note-taking.
-
-At the same time, I began to write small programs to work with this collection of notes, and started to run into limitations with Markdown, HTML and other formats. Parsing Markdown or HTML into an AST is possible, but in practice, is often a headache. Once you do have it parsed, it is often unclear how to meaningfully decompose or merge documents. Heading levels may need to be changed, lists may need to be flattened or nested. Because the document format is complex, foreknowledge of the meaning of the document is necessary to make meaningful programmatic changes.
-
-A linear block-oriented format resolves the problem by radically simplifying it. With a linear data model, the range of meaningful document structures is narrowed, and this means you can make complex, yet meaningful programmatic decisions, without as much context about the specific document:
-
-- Excerpt a document by taking the first text block
-- Select all quotes from a collection of documents
-- Select all links, and generate a graph for a collection of documents
-- Find all backlinks and append them to the document as links
-
-Linear, block-oriented formats are like shipping containers for discrete thoughts. Because they are structurally uniform, they can be automatically moved around and reorganized.
-
-### Design notes
-
-- [Hypertext Montage](https://subconscious.substack.com/p/hypertext-montage)
-- [Thought Legos](https://subconscious.substack.com/p/thought-legos)
+- [Subtext overview and motivation](README.md).
+- [FAQ](faq.md)
+- [Future language explorations](./explorations/): this section is non-normative and exploratory. It captures some thinking about possible language additions or alternatives.
+- [Subtext parsers](./parsers/): code you can use to parse and work with Subtext.
+- Design notes
+  - [Hypertext Montage](https://subconscious.substack.com/p/hypertext-montage)
+  - [Thought Legos](https://subconscious.substack.com/p/thought-legos)
 
 ## Appendix 3: References
 
