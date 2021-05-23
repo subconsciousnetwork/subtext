@@ -13,7 +13,7 @@ See [explorations/deep-links.md](explorations/deep-links.md) for more.
 
 ## What about bold/italic and other inline markup?
 
-3 provocations to myself:
+I asked myself this same question, and came away with 3 provocations to myself:
 
 1. [YAGNI](design.md).
 2. It's markup for note taking.
@@ -27,13 +27,13 @@ See [explorations/inline.md](explorations/inline.md) for more.
 
 ## What about nested outlines?
 
-I really vibe with 1965 Ted’s YAGNI attitude. Basically “it could be a tree but a list is just fine.”
+I really appreciate Ted Nelson's YAGNI attitude in Nelson, 1965. Basically “it could be a tree but a list is just fine.”
 
 When it's flat, you just concat. And trees are still there... as links! In the editor this could be represented as nested lists, even if the result is discrete flat files.
 
 ## What about tags?
 
-Maybe worth considering. Hashtags perhaps? On the other hand, a tag is just a link to a page that doesn’t exist yet. Backlinks get you all of the practical features of tags.
+Hashtags perhaps? On the other hand, a tag is just a link to a page that doesn’t exist yet. Backlinks get you all of the practical features of tags.
 
 See [explorations/hashtags.md](explorations/hashtags.md) and [explorations/multi-ref-links.md](explorations/multi-ref-links.md) for more.
 
@@ -57,7 +57,6 @@ Because each line is a stand-alone block, it is possible to stream Subtext, and 
 
 Some other small-but-nice properties of line-orientation (but not necessarily deal breakers to lose):
 
-- Diffs are very clean
 - Editors can rearrange blocks without parsing the text
 - You can naively concatenate Subtext files, and get valid Subtext (also happens to be true of blank-line delimited text, but not necessarily other kinds of non-line-oriented markup).
 

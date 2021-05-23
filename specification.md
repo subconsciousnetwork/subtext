@@ -154,11 +154,11 @@ Links are the most important feature in Subtext. By allowing you to reference ot
 
 Rather than extending the syntax of Subtext to include features like tables, videos, or deeply nested lists, our sense is that a hypertext format allows these special types to be represented in their native file containers. Clients that understand these other file types MAY embed them, or even allow you to edit them in-place. This keeps Subtext simple, and allows data sources like `.csv`, or `.png` to be OPTIONALLY embedded in-place, while remaining valid file types that can be opened, edited, and used in best-of-breed applications.
 
-**For future exploration**: Multiple sources. We could support providing multiple link sources through a space-separated list of URIs. A client could choose whichever one is best. This could allow for the coexistence of `http://`, and `ipfs://` links, for example.
+**For future exploration**: [Multiple reference links](explorations/multi-ref-links.md).
 
-**For future exploration**: Citations via DOI links. Citations could be embedded as DOIs. The recommended format for DOIs since 2011 is an active link (for example `http://doi.org/10.3352/jeehp.2013.10.3`). Adding DOI links could allow clients to automatically compile citations from a Subtext document.
+**For future exploration**: [Generating citations via DOI links](explorations/doi.md).
 
-**For future exploration**: Search links. "Any sufficiently advanced search is indistinguishable from a hyperlink". Rather than linking to file paths or URLs, links could include a search string, allowing a client to choose the best match from an index. This "search link" approach is inspired by [Notational Velocity's ](https://notational.net/) treatment of `[[WikiLinks]]` as search strings.
+**For future exploration**: [Wiki links and search links](explorations/wikilink.md)
 
 ### Heading blocks
 
@@ -209,61 +209,16 @@ The Mime Type for Subtext is `text/subtext`. As a subtype of the top-level media
 
 Subtext is valid plain text and plain text is, in most cases, valid Subtext. In most cases it should be practically possible to read `.txt` files as Subtext, if a client wishes to.
 
-## Appendix 1: Future explorations
-
-### Key-value blocks
-
-We could explore expanding Subtext to support markup for [key-value pairs](https://en.wikipedia.org/wiki/Attribute%E2%80%93value_pair).
-
-```
-Q: What is Subtext?
-A: Subtext is a markup language for note-taking.
-```
-
-A key-value block is any alphanumeric string followed by a `:`. The alphanumeric string before the `:` becomes the sigil type for the block.
-
-Sigil, described as a regular expression:
-
-```
-^[a-zA-Z0-9_]+:\s
-```
-
-Key-value pairs are a fundamental primitive with a wide range of potential use-cases for tooling. Like any other type of block, key-value blocks could be gathered by key into lists, concatenated, or collected using a first- or last-key-wins to get simple key/value data.
-
-- You could execute queries such as: “list all questions (`Q:` blocks) in my notes”.
-- You could transform a collection of notes into a sparse table by treating each note as a row, and treating keys as columns. Denser tabular data can be had by filtering notes to only include those with a particular set of keys, and then concatenating, JSON-encoding, or dropping duplicate keys. Tada! CSV.
-- You could include headmatter in the body of a note. This can make it easier to integrate notes with static site generators, or other tools.
-
-**Open question**: what are the implications for parsing? It would require us to run a search on across a string for an unbounded number of characters, until we encounter a space character, before defining the block as a text block. That means this search must happen to every block before it can be found to be a text block. Is this a problem in practice? Are there ways we could simplify this algorithmically?
-
-### Hashtags
-
-We could explore expanding Subtext to include support for hashtags in text blocks:
-
-```
-There’s no such thing as advantageous in a general sense. It’s advantageous in the circumstances you’re living in. #evolution #ecology
-```
-
-Hashtags could be collected into a "tags" field of text blocks, and perhaps stripped from the text as well.
-
-**OTOH**: Tags are just a backlinks to pages that don't exist. To use an OODA lens, tagging is O without ODA. Collecting into tagged buckets is not sense-making, only a coarse-grained first approximation. Sense-making should fold into Orientation, and make it possible to expand your repertoire of Actions. That means synthesizing collected information into new knowledge. This is something linking supports, and tags do not. So if we have to choose one primitive, Wikilinks are the better primitive.
-
-## Appendix 2: Terminology
+## Appendix 1: Terminology
 
 ### Specification requirement levels
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
 
 
-## Appendix 3: Background
+## Appendix 2: Background
 
-### Similarities to Ted Nelson's ELF
-
-By an accident of convergent evolution, Subtext happens to have some structural resemblances to Ted Nelson's ELF format (Nelson, 1965).
-
-TODO elaborate.
-
-### Background motivation
+### Motivation
 
 Subtext evolved out personal experiments with plain-text note-taking, spanning 10 years and 10k notes. Many of these notes were written in Markdown. However, with time, I noticed that the markup needs of note-taking are different from those of publishing. My note-taking style converged on a small subset of Markdown's features: text, links, lists, quotes, and one level of heading. To have more may be useful for publishing, but is often overkill for note-taking.
 
@@ -282,6 +237,17 @@ Linear, block-oriented formats are like shipping containers for discrete thought
 
 - [Hypertext Montage](https://subconscious.substack.com/p/hypertext-montage)
 - [Thought Legos](https://subconscious.substack.com/p/thought-legos)
+
+### Prior art
+
+#### Ted Nelson's ELF
+
+By an accident of convergent evolution, Subtext happens to have some structural resemblances to Ted Nelson's ELF format (Nelson, 1965).
+
+#### Runic
+
+
+#### Project Gemini
 
 ## References
 
