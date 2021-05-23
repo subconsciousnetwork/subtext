@@ -1,0 +1,1 @@
+The explorations section is non-normative. It's a place to capture notes on possible future experiments.
