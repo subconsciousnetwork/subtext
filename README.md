@@ -75,7 +75,7 @@ This keeps Subtext simple. Rather than extending the syntax of Subtext to includ
 
 ## One of the many attempts of nature to evolve a Xanadu
 
-By an accident of convergent evolution, Subtext haveappens to have some similarities to Ted Nelson's ELF format (Nelson, 1965).
+By an accident of convergent evolution, Subtext happens to have some similarities to Ted Nelson's ELF format (Nelson, 1965).
 
 ![Ted Nelson “A File Structure for the Complex, the Changing, and the Indeterminate”, 1965](./assets/elf.png)
 
