@@ -35,13 +35,13 @@ When it's flat, you just concat. And trees are still there... as links! In the e
 
 Hashtags perhaps? On the other hand, a tag is just a link to a page that doesn’t exist yet. Backlinks get you all of the practical features of tags.
 
-See [explorations/hashtags.md](explorations/hashtags.md) and [explorations/multi-ref-links.md](explorations/multi-ref-links.md) for more.
+See [explorations/hashtags.md](explorations/hashtags.md), [explorations/wiki-link.md](explorations/wikilink.md) and [explorations/multi-ref-links.md](explorations/multi-ref-links.md) for more.
 
 ## What about wikilinks?
 
 My sense is that link blocks should be able to accept multiple reference types, including just ordinary words that the client can interpret as a wiki “word link”.
 
-See [explorations/multi-ref-links.md](explorations/multi-ref-links.md) for more.
+See [explorations/wiki-link.md](explorations/wikilink.md) and [explorations/multi-ref-links.md](explorations/multi-ref-links.md) for more.
 
 ## Why line-oriented?
 
