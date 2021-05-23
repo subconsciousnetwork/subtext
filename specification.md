@@ -154,11 +154,11 @@ Links are the most important feature in Subtext. By allowing you to reference ot
 
 Rather than extending the syntax of Subtext to include features like tables, videos, or deeply nested lists, our sense is that a hypertext format allows these special types to be represented in their native file containers. Clients that understand these other file types MAY embed them, or even allow you to edit them in-place. This keeps Subtext simple, and allows data sources like `.csv`, or `.png` to be OPTIONALLY embedded in-place, while remaining valid file types that can be opened, edited, and used in best-of-breed applications.
 
-**For future exploration**: [Multiple reference links](explorations/multi-ref-links.md).
+**For future exploration**:
 
-**For future exploration**: [Generating citations via DOI links](explorations/doi.md).
-
-**For future exploration**: [Wiki links and search links](explorations/wikilink.md)
+- [Multiple reference links](explorations/multi-ref-links.md)
+- [Generating citations via DOI links](explorations/doi.md)
+- [Wiki links and search links](explorations/wikilink.md)
 
 ### Heading blocks
 
