@@ -11,7 +11,7 @@ This was a considered design choice! My sense is that it's best to nudge each li
 
 See [explorations/deep-links.md](explorations/deep-links.md) for more.
 
-## What about bold/italic and other inline markup?
+## What about bold, italic, and other inline markup?
 
 I asked myself this same question, and came away with 3 provocations to myself:
 
@@ -43,9 +43,11 @@ My sense is that link blocks should be able to accept multiple reference types, 
 
 See [explorations/multi-ref-links.md](explorations/multi-ref-links.md) for more.
 
-## Why not delimit blocks with a blank line?
+## Why line-oriented?
 
-Subtext was first sparked by seeing [Runic](https://wiki.xxiivv.com/site/runic.html), which made me fall in love with the simple and clever idea of line-oriented markup. Discovering [Project Gemini](https://gemini.circumlunar.space/docs/specification.gmi) was further confirmation that line-oriented markup could be a solid basis for hypertext.
+For example, why not delimit blocks with a blank line?
+
+Subtext was partially sparked by discovering [Runic](https://wiki.xxiivv.com/site/runic.html) some years ago. This clever little language made me fall in love with the idea of line-oriented markup. Discovering [Project Gemini](https://gemini.circumlunar.space/docs/specification.gmi) was further confirmation that line-oriented markup could be a solid basis for hypertext.
 
 One reason to appreciate line-orientation is that it makes parsing extremely simple. Breaking by line is an elegant balance that is [simple for people and simple for computers](design.md).
 

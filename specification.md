@@ -2,7 +2,7 @@
 
 ## Speculative specification
 
-**Version**: 2021.05.17.dev  
+**Version**: 2021.05.22.dev  
 **Status**: Draft  
 **Authors**: Gordon Brander  
 
@@ -215,8 +215,7 @@ Subtext is valid plain text and plain text is, in most cases, valid Subtext. In 
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
 
-
-## Appendix 2: Background
+## Appendix 2: Notes and References
 
 ### Motivation
 
@@ -246,9 +245,14 @@ By an accident of convergent evolution, Subtext happens to have some structural 
 
 #### Runic
 
+[Runic](https://wiki.xxiivv.com/site/runic.html) is a small line-oriented wiki markup language. The simplicity and cleverness of Runic made me fall in love with the idea of line-oriented markup.
 
 #### Project Gemini
 
-## References
+[Gemini](https://gemini.circumlunar.space/) is an internet protocol which aims to be "heavier than gopher and lighter than the web." [Gemini features a line-oriented markup language](https://gemini.circumlunar.space/docs/specification.gmi).
+
+I discovered Gemini about a month after roughing out the outline for Subtext. I was excited about the idea of a minimal line-oriented syntax. Gemini gave me further confidence that line-orientated markup could be a solid basis for a hypertext format.
+
+### References
 
 - Nelson, Theodore "A File Structure for the Complex, the Changing, and the Indeterminate", Association for Computing Machinery, Proceedings of the 20th National Conference, 84-100. Ed. Lewis Winner, 1965.
