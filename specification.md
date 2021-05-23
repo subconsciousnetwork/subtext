@@ -143,7 +143,7 @@ Link blocks start with `& `. They reference other files within the flow of a Sub
 
 The client MUST render some kind of user-interactable link to the document. The client MAY choose what form this link takes.
 
-For file types it understands, the client MAY render all or part of the linked document in-place (e.g. translude). For example:
+For file types it understands, the client MAY render all or part of the linked document in-place (e.g. transclude). For example:
 
 - A linked image file (`.png`, `.jpg`, `.gif`, etc) MAY be rendered in-place by the client and sized to fit its context.
 - A linked video file MAY be rendered in-place, together with playback controls.
@@ -164,7 +164,7 @@ Rather than extending the syntax of Subtext to include features like tables, vid
 
 Heading blocks start with `# `.
 
-Heading blocks SHOULD be presented in a manner denotes that they are hierarchically "above", and "label" blocks below. This MAY   mean typical typographic heading treatment in visual clients, such as increasing the font size as compared to text blocks, or displaying the text in bold. In non-visual clients, such as screen readers, this MAY mean announcing the block using a different voice style.
+Heading blocks SHOULD be presented in a manner denotes that they are hierarchically "above", and "label" blocks below. This MAY mean typical typographic heading treatment in visual clients, such as increasing the font size as compared to text blocks, or displaying the text in bold. In non-visual clients, such as screen readers, this MAY mean announcing the block using a different voice style.
 
 Clients MAY also create navigational affordances for headings, such as deriving a Table of Contents from heading blocks, or creating jump points in the scroll bar.
 
