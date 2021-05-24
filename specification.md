@@ -242,6 +242,36 @@ By an accident of convergent evolution, Subtext happens to have some structural 
 
 I discovered Gemini about a month after roughing out the outline for Subtext. I was excited about the idea of a minimal line-oriented syntax. Gemini gave me further confidence that line-orientated markup could be a solid basis for a hypertext format.
 
+#### Markdown
+
+Subtext has a passing resemblance to [Markdown](https://daringfireball.net/projects/markdown/). Markdown is a popular plain text formatting systems among programmers. It features a familiar syntax that looks similar to the organic conventions of plain text email.
+
+Markdown is meant to have HTML semantics, and compile to HTML. You can also embed arbitrary HTML within Markdown. By contrast, Subtext can be compiled to HTML, but is not specifically a "compile to HTML" language. Note [Subconscious](https://subconscious.substack.com/) will be shipping a native (non-browser) renderer for Subtext. It's important that we don't drag the whole web specification in behind us accidentally.
+
+The original implementation of Markdown used regular expression string replacement, rather than parsing an AST. Many Markdown libraries take this approach. Few generate an AST.
+
+Markdown does not have an official formal specification, only a reference implementation. Aspects of the syntax are ambiguous. This is a fine choice for a personal tool, and has encouraged organic extensions to the syntax, such as [GitHub-flavored Markdown](https://github.github.com/gfm/). On the other hand, it makes it difficult to treat Markdown itself as a standardized format intended to work across multiple clients. 
+
+Specifications for various dialects:
+
+- [GitHub-flavored Markdown](https://github.github.com/gfm/)
+- [CommonMark](https://commonmark.org/)
+
+#### Emacs Org Mode and Outline Mode
+
+[Outline Mode](https://www.gnu.org/software/emacs/manual/html_node/emacs/Outline-Mode.html) and [Org Mode](https://orgmode.org/) are two popular plain text syntax flavors in Emacs.
+
+[Syntax](https://www.gnu.org/software/emacs/manual/html_node/emacs/Outline-Format.html): Outline Mode is made up of headings (prefixed with one or more `*`), and text (unprefixed). The number of `*` determines the depth of the heading. Text below a heading is considered "belonging to" that heading, and together they make up an "entry".
+
+Org Mode builds on Outline Mode, adding additional syntax for metadata, `[[wikilinks]]` and other features.
+
+Things appreciate about Outline Mode:
+
+- It gets a lot of mileage out of a single primitive (`*`).
+- It is a structured format. You can parse it into logical software-manipulable blocks.
+
+Con: Forcing titles for logical blocks imposes a fair amount of abstract thinking when taking rough notes.
+
 ### References
 
 - Nelson, Theodore "A File Structure for the Complex, the Changing, and the Indeterminate", Association for Computing Machinery, Proceedings of the 20th National Conference, 84-100. Ed. Lewis Winner, 1965.
