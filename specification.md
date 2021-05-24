@@ -200,6 +200,22 @@ The following sigils are reserved for possible future use:
 
 Note, again, that the sigil includes the space character.
 
+## Line breaks
+
+Different systems use different character(s) for breaking lines. Because Subtext is line-oriented, it specifies a strategy for normalizing line breaks.
+
+The canonical line-break for Subtext is `\n` (LF).
+
+Human authors of Subtext SHOULD use `\n` to delimit lines.
+
+Software that writes Subtext MUST use `\n` to delimit lines.
+
+Subtext parsers MUST normalize newlines by interpreting `\r\n` (CRLF) and `\r` (CR) as equivalent to `\n`.
+
+Other line break characters, including Unicode line-break characters such as `PS` and `LS` MUST NOT be treated as line delimiters for the purpose of Subtext parsing.
+
+This strategy follows [Postel's Robustness Principle](https://en.wikipedia.org/wiki/Robustness_principle), to a degree. We standardize on a single line-break character, but will parse the most widely used alternatives.
+
 ## Mime Type and extension
 
 The preferred file extension for Subtext is `.st`.
