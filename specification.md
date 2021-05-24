@@ -288,6 +288,8 @@ Things to appreciate about Outline Mode:
 
 Con: Forcing titles for logical blocks imposes a fair amount of abstract thinking when taking rough notes.
 
+Note Org Mode is not strictly line-oriented. [It breaks paragraphs by one or more blank lines](https://orgmode.org/manual/Paragraphs.html).
+
 ### References
 
 - Nelson, Theodore "A File Structure for the Complex, the Changing, and the Indeterminate", Association for Computing Machinery, Proceedings of the 20th National Conference, 84-100. Ed. Lewis Winner, 1965.
