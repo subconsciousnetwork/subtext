@@ -2,15 +2,15 @@
 - RFC PR: (fill me in with link to PR)
 - Issue: (fill me in with link to issue, if any)
 
-## Summary
+# Summary
 
 One paragraph explanation of the feature.
 
-## Motivation
+# Motivation
 
 Why are we doing this? What use cases does it support? What is the expected outcome?
 
-## Guide-level explanation
+# Guide-level explanation
 
 Explain the proposal as if it was already included in the language and you were teaching it to someone who is new to the language. That generally means:
 
@@ -20,7 +20,7 @@ Explain the proposal as if it was already included in the language and you were 
 - If applicable, provide sample error messages, deprecation warnings, or migration guidance.
 - If applicable, describe the differences between teaching this to existing Subtext users and new Subtext users.
 
-## Reference-level explanation
+# Reference-level explanation
 
 This is the technical portion of the RFC. Explain the design in sufficient detail that:
 
@@ -30,11 +30,11 @@ This is the technical portion of the RFC. Explain the design in sufficient detai
 
 The section should return to the examples given in the previous section, and explain more fully how the detailed proposal makes those examples work.
 
-## Drawbacks
+# Drawbacks
 
 Why should we *not* do this?
 
-## Rationale and alternatives
+# Rationale and alternatives
 
 - Why is this design the best in the space of possible designs?
 - What are the values embodied by this design. It's helpful to list them out explicitly.
