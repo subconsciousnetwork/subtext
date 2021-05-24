@@ -265,7 +265,7 @@ Specifications for various dialects:
 
 Org Mode builds on Outline Mode, adding additional syntax for metadata, `[[wikilinks]]` and other features.
 
-Things appreciate about Outline Mode:
+Things to appreciate about Outline Mode:
 
 - It gets a lot of mileage out of a single primitive (`*`).
 - It is a structured format. You can parse it into logical software-manipulable blocks.
