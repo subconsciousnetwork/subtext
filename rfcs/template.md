@@ -1,6 +1,6 @@
 - Feature: (fill me in with a descriptive name prefixed with today's date `2021-05-22 My Feature Name`)
 - RFC PR: (fill me in with link to PR)
-- Rust Issue: (fill me in with link to issue, if any)
+- Issue: (fill me in with link to issue, if any)
 
 ## Summary
 
@@ -37,6 +37,7 @@ Why should we *not* do this?
 ## Rationale and alternatives
 
 - Why is this design the best in the space of possible designs?
+- What are the values embodied by this design. It's helpful to list them out explicitly.
 - What are the set of tradeoffs this design chooses? What other, different sets of tradeoffs might be disireable? Why?
 - What other designs have been considered and what is the rationale for not choosing them?
 - What is the impact of not doing this?
