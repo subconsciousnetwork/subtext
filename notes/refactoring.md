@@ -9,7 +9,7 @@ Hypertext _refactoring_ looks like:
 
 In addition to this large page level _refactoring_, there are also smaller-scale text-level changes:
 
-- **Re-arranging**: moving around paragraph-scale blocks, or items in a list.
+- **Rearranging**: moving around paragraph-scale blocks, or items in a list.
 - **Adding**: often appending a bit of information to the end of a document, or the end of a list.
 - **Removing**: removing a bit of text that is no longer useful.
 - **Rewriting** This one requires careful creative judgement. It's the Synthesize step in [Capture, Organize, Synthesize](https://subconscious.substack.com/p/unconscious-r-and-d) and can include re-organizing, adding, and removing as one big holistic action.
@@ -24,8 +24,16 @@ To do so, we need to make hypertext [legible](https://www.ribbonfarm.com/2010/07
 
 **An ordinary plain text file** is more or less a single blob. Without any formal structure, it is difficult for a computer to understand what can be re-arranged, what can be factored out. However, text is flat, so we can probably usefully merge two text files by concatenating them.
 
-**HTML, or other publishing formats** are deep trees of nodes. The nodes describe structural relationships, and formatting properties. Often these nodes can be infinitely nested. These complex formats bring structure to the document, but since this structure is arbitrarily complex, it is difficult to meaninfully manipulate the document without foreknowledge of the human meanings assigned to the particular document structure. This is why [web scraping](https://en.wikipedia.org/wiki/Web_scraping) is brittle in practice.
+**HTML, or other publishing formats** are deep trees of nodes. The nodes describe structural relationships, and formatting properties. Often these nodes can be infinitely nested. These formats bring structure to the document, but since this structure is arbitrarily complex, it is difficult to meaninfully manipulate the document without foreknowledge of the human meanings assigned to the particular document structure. How do you merge two HTML documents? Without understanding the particulars of the document, it is unclear. The result is often tag soup. This is also why [web scraping](https://en.wikipedia.org/wiki/Web_scraping) is brittle in practice.
 
 **Between these two extremes** could there be a format that is simple for people to understand, simple for computers to manipulate, and meaningful for both?
 
 **This is the goal of [Subtext](https://github.com/gordonbrander/subtext)** — not to offer visual formatting, but to find the smallest surface-area of document structure, with the highest range of meaningful creative expression for both people and computers.
+
+With Subtext, both people and software should be able to easily:
+
+- **Merge** documents
+- **Factor out** a block in a document into a new document
+- **Rearrange** blocks in a document
+- **Filter** a document down to only those blocks meeting a particular condition
+- **Combine** parts of old documents to create new documents
