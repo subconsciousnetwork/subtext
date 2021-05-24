@@ -35,7 +35,7 @@ Subtext is made of blocks. Blocks are roughly analogous to a paragraph, so 1 blo
 Subtext is flat. Paradoxically, by limiting the format to a flat list of blocks, we expand what software can usefully do with it. The set of document structures is narrower, so there are fewer ways to fail. For example:
 
 - Concatenation is a "good enough" merging strategy for flat documents.
-- Because prose is linear, software can assume a [BLUF](https://en.wikipedia.org/wiki/BLUF_(communication) writing style, and take the first few blocks to get a useful excerpt.
+- Because prose is linear, software can assume a [BLUF](https://en.wikipedia.org/wiki/BLUF_(communication)) writing style, and take the first few blocks to get a useful excerpt.
 
 With Subtext, both people and software should be able to easily:
 
