@@ -101,4 +101,5 @@ The syntax is also simple, and hard to mess up, and I’m happy about that, too.
 
 - [Specification](specification.md)
 - [FAQ](faq.md)
-- [Design principles](design.md)
+- [Design principles](notes/design.md)
+- [Notes](./notes/)

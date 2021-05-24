@@ -15,7 +15,7 @@ See [explorations/deep-links.md](explorations/deep-links.md) for more.
 
 I asked myself this same question, and came away with 3 provocations to myself:
 
-1. [YAGNI](design.md).
+1. [YAGNI](notes/design.md).
 2. It's markup for note taking.
 3. I never seem to miss bold/italic when I'm taking notes by hand.
 
@@ -49,7 +49,7 @@ For example, why not delimit blocks with a blank line?
 
 Subtext was partially sparked by discovering [Runic](https://wiki.xxiivv.com/site/runic.html) some years ago. This clever little language made me fall in love with the idea of line-oriented markup. Discovering [Project Gemini](https://gemini.circumlunar.space/docs/specification.gmi) was further confirmation that line-oriented markup could be a solid basis for hypertext.
 
-One reason to appreciate line-orientation is that it makes parsing extremely simple. Breaking by line is an elegant balance that is [simple for people and simple for computers](design.md).
+One reason to appreciate line-orientation is that it makes parsing extremely simple. Breaking by line is an elegant balance that is [simple for people and simple for computers](notes/design.md).
 
 Each line is a stand-alone block, and does not rely on previous or subsequent lines to determine its block type. Parsing is a simple map operation, rather than a fold operation. It's extremely fast.
 
