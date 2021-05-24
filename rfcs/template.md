@@ -42,7 +42,7 @@ Why should we *not* do this?
 - What other designs have been considered and what is the rationale for not choosing them?
 - What is the impact of not doing this?
 
-## Prior art
+# Prior art
 
 Discuss prior art, both the good and the bad, in relation to this proposal.
 A few examples of what this can include are:
