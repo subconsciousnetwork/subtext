@@ -28,7 +28,14 @@ To do so, we need to make hypertext [legible](https://www.ribbonfarm.com/2010/07
 
 **Between these two extremes** could there be a format that is simple for people to understand, simple for computers to manipulate, and meaningful for both?
 
-**This is the goal of [Subtext](https://github.com/gordonbrander/subtext)** — not to offer visual formatting, but to find the smallest surface-area of document structure, with the highest range of meaningful creative expression for both people and computers.
+**This is the goal of [Subtext](https://github.com/gordonbrander/subtext)** — not to offer visual formatting, but to find the smallest surface-area of document structure, with the highest range of meaningful creative expression for both people and computers. Subtext attempts to resolve this dilemma by radically simplifying it.
+
+Subtext is made of blocks. Blocks are roughly analogous to a paragraph, so 1 block = 1 idea. This breaks text apart into [idea legos](https://subconscious.substack.com/p/thought-legos) that can be easily composed and rearranged.
+
+Subtext is flat. Paradoxically, by limiting the format to a flat list of blocks, we radically what software can usefully do with it. The set of document structures is narrower, so there are fewer ways to fail. For example:
+
+- Concatenation is a "good enough" merging strategy for flat documents.
+- Because prose is linear, software can assume a [BLUF](https://en.wikipedia.org/wiki/BLUF_(communication) writing style, and take the first few blocks to get a useful excerpt.
 
 With Subtext, both people and software should be able to easily:
 
