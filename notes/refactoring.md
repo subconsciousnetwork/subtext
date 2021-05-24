@@ -32,7 +32,7 @@ To do so, we need to make hypertext [legible](https://www.ribbonfarm.com/2010/07
 
 Subtext is made of blocks. Blocks are roughly analogous to a paragraph, so 1 block = 1 idea. This breaks text apart into [idea legos](https://subconscious.substack.com/p/thought-legos) that can be easily composed and rearranged.
 
-Subtext is flat. Paradoxically, by limiting the format to a flat list of blocks, we radically what software can usefully do with it. The set of document structures is narrower, so there are fewer ways to fail. For example:
+Subtext is flat. Paradoxically, by limiting the format to a flat list of blocks, we expand what software can usefully do with it. The set of document structures is narrower, so there are fewer ways to fail. For example:
 
 - Concatenation is a "good enough" merging strategy for flat documents.
 - Because prose is linear, software can assume a [BLUF](https://en.wikipedia.org/wiki/BLUF_(communication) writing style, and take the first few blocks to get a useful excerpt.
