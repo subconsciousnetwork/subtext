@@ -2,7 +2,7 @@
 
 ## Speculative specification
 
-- **Version**: 2021.05.23.dev
+- **Version**: 2021.05.25.dev
 - **Status**: Draft
 - **Authors**: Gordon Brander
 
@@ -202,7 +202,7 @@ Note, again, that the sigil includes the space character.
 
 ## Line breaks
 
-Different systems use different character(s) for breaking lines. Because Subtext is line-oriented, it specifies a strategy for normalizing line breaks.
+Different systems use different character(s) for breaking lines. For example, Unix systems use `\n` (LF), while Windows uses `\r\n` (CRLF) (See [Wikipedia entry on newlines](https://en.wikipedia.org/wiki/Newline#Representation)). Because Subtext is line-oriented, it specifies a strategy for normalizing line breaks.
 
 The canonical line-break for Subtext is `\n` (LF).
 
@@ -210,7 +210,10 @@ Human authors of Subtext SHOULD use `\n` to delimit lines.
 
 Software that writes Subtext MUST use `\n` to delimit lines.
 
-Subtext parsers MUST normalize newlines by interpreting `\r\n` (CRLF) and `\r` (CR) as equivalent to `\n`.
+Subtext parsers MUST normalize newlines by interpreting `\r\n` (CRLF) and `\r` (CR) as equivalent to `\n`, using the following sequence of steps:
+
+1. If `\r\n` is encountered, it is normalized to be equivalent to `\n` by the parser.
+2. If `\r` is encountered, it is normalized to be equivalent to `\n` by the parser.
 
 Other line break characters, including Unicode line-break characters such as `PS` and `LS` MUST NOT be treated as line delimiters for the purpose of Subtext parsing.
 
