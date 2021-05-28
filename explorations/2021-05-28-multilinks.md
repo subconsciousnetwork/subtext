@@ -247,8 +247,9 @@ Disadvantages:
 
 - HTML5 srcset attribute. See [srcset spec](https://html.spec.whatwg.org/multipage/images.html#srcset-attribute), [srcset explainer on MDN](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images#resolution_switching_different_sizes)
   - Note that srcset delimits by comma, which is a reserved URL character. This ambiguity causes practical problems with parsing ([example](https://github.com/simplecrawler/simplecrawler/issues/413)). If we wanted to use a comma, we could require the comma be followed by a space.
-- picture tag
-- video tag
+- [source tag](https://html.spec.whatwg.org/multipage/embedded-content.html#the-source-element) in picture tag
+- [source tag](https://html.spec.whatwg.org/multipage/embedded-content.html#the-source-element) in video tag
+- [source tag](https://html.spec.whatwg.org/multipage/embedded-content.html#the-source-element) in audio tag
 
 # Unresolved questions
 
@@ -258,5 +259,5 @@ Disadvantages:
 
 - What about markup for MIME type?
   - What if the different URLs have different resources with different MIME types?
-  - Is this useful? What happens when MIME in markup and MIME in request don't match?
-  - Is this necessary? You have to fetch the resource to be able to transclude it anyway.
+  - What happens when MIME in markup and MIME in request don't match? If the actual response doesn't match you probably have to throw it away, or specify some fallback behavior.
+  - Is this necessary? When links are followed eagerly, as with audio/video/transcludes, it does allow you to avoid fetching files when you don't understand the MIME type.
