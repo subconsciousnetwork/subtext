@@ -3,6 +3,7 @@ Example Subtext markup parser
 """
 from functools import reduce
 from collections import namedtuple
+from itertools import groupby
 from io import StringIO
 
 
@@ -104,6 +105,23 @@ def blocks_to_plain(blocks):
     """
     for block in blocks:
         yield f"{block.value}"
+
+
+BlockGroup = namedtuple("BlockGroup", ("type", "value"))
+
+
+def _get_block_type(block):
+    return block.type
+
+
+def group_blocks(blocks):
+    """
+    Group contiguous blocks by type.
+    This may be useful if you want to move or manipulate contiguous
+    ranges of blocks together, such as a series of list items.
+    """
+    for block_type, block_group in groupby(blocks, _get_block_type):
+        yield BlockGroup(block_type, tuple(block_group))
 
 
 def find_first_text(blocks, default=""):
