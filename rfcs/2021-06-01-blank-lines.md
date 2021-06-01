@@ -1,5 +1,5 @@
 - Feature: 2021-06-01-blank-lines
-- RFC PR: https://github.com/gordonbrander/subtext/pull/11
+- RFC PR: https://github.com/gordonbrander/subtext/pull/13
 
 # Summary
 
