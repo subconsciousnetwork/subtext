@@ -2,7 +2,7 @@
 
 ## Speculative specification
 
-- **Version**: 2021.05.25.dev
+- **Version**: 2021.06.01.dev
 - **Status**: Draft
 - **Authors**: Gordon Brander
 
