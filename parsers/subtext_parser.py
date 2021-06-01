@@ -2,20 +2,9 @@
 Example Subtext markup parser
 """
 from functools import reduce
-
-
-def daisychain(iterable, last=None):
-    """
-    Iterate over an iterable by pairs `((1, 2), (2, 3), ...)`.
-    """
-    items = iter(iterable)
-    n = next(items, None)
-    if n is None:
-        return
-    for n1 in items:
-        yield (n, n1)
-        n = n1
-    yield (n, last)
+from collections import namedtuple
+from itertools import groupby
+from io import StringIO
 
 
 def id(x):
@@ -40,39 +29,30 @@ def compose(*funcs):
 
 def splitlines(str):
     """
-    Func version of splitlines
+    Subtext-conforming implementation of splitlines.
+
+    Python's native splitlines splits on a set of Unicode line-endings,
+    and so does not match the line-ending behavior specified by Subtext.
+
+    OTOH, Python's file wrapper splits on `\n`, `\r\n`, and `\r`,
+    exactly as is specified in Subtext. We use it instead.
+
+    More notes:
+    https://github.com/gordonbrander/subtext/blob/main/rfcs/2021-05-24-newlines.md#prior-art
     """
-    return str.splitlines()
+    filewrapper = StringIO(str)
+    for line in filewrapper:
+        yield line.rstrip("\n\r")
 
 
-def join(strings):
-    return "".join(strings)
+def joinlines(lines):
+    """
+    Join lines using Unix-style newlines
+    """
+    return "\n".join(lines)
 
 
-BLOCK_TYPES = ("heading", "list", "quote", "link", "text", "eof")
-
-
-def guard_block_type(type):
-    if type not in BLOCK_TYPES:
-        raise ValueError(f"Unknown type for block: {type}")
-    return type
-
-
-def guard_block_value(value):
-    if not isinstance(value, str):
-        raise ValueError(
-            f"Block value must be instance of str. Given: {type(value)}"
-        )
-    return value
-
-
-class Block:
-    def __init__(self, type, value):
-        self.type = guard_block_type(type)
-        self.value = guard_block_value(value)
-
-
-eof = Block("eof", "")
+Block = namedtuple("Block", ("type", "value"))
 
 
 def _strip_markup_line(line, sigil):
@@ -94,7 +74,7 @@ def markup_to_blocks(lines):
         elif line.startswith("& "):
             yield Block("link", _strip_markup_line(line, "& "))
         elif line.strip() == "":
-            pass
+            yield Block("blank", "")
         else:
             yield Block("text", line)
 
@@ -103,20 +83,19 @@ def blocks_to_markup(blocks):
     """
     Render an iterable of blocks to an iterable of markup lines
     """
-    for curr, next in daisychain(blocks, last=eof):
-        if curr.type == "heading":
-            yield f"# {curr.value}\n\n"
-        elif curr.type == "list":
-            if next.type == "list":
-                yield f"- {curr.value}\n"
-            else:
-                yield f"- {curr.value}\n\n"
-        elif curr.type == "quote":
-            yield f"> {curr.value}\n\n"
-        elif curr.type == "link":
-            yield f"& {curr.value}\n\n"
+    for block in blocks:
+        if block.type == "heading":
+            yield f"# {block.value}"
+        elif block.type == "list":
+            yield f"- {block.value}"
+        elif block.type == "quote":
+            yield f"> {block.value}"
+        elif block.type == "link":
+            yield f"& {block.value}"
+        elif block.type == "blank":
+            yield ""
         else:
-            yield f"{curr.value}\n\n"
+            yield f"{block.value}"
 
 
 def blocks_to_plain(blocks):
@@ -128,24 +107,21 @@ def blocks_to_plain(blocks):
         yield f"{block.value}"
 
 
-def dict_to_block(block_dict):
-    """
-    Transform a dict into a Block, raising an exception if dict is malformed.
-    """
-    return Block(
-        block_dict["type"],
-        block_dict["value"]
-    )
+BlockGroup = namedtuple("BlockGroup", ("type", "value"))
 
 
-def block_to_dict(block):
+def _get_block_type(block):
+    return block.type
+
+
+def group_blocks(blocks):
     """
-    Serialize a block as a dict.
+    Group contiguous blocks by type.
+    This may be useful if you want to move or manipulate contiguous
+    ranges of blocks together, such as a series of list items.
     """
-    return {
-        "type": block.type,
-        "value": block.value
-    }
+    for block_type, block_group in groupby(blocks, _get_block_type):
+        yield BlockGroup(block_type, tuple(block_group))
 
 
 def find_first_text(blocks, default=""):
@@ -154,7 +130,7 @@ def find_first_text(blocks, default=""):
     Returns that text, or default, if there are no text blocks.
     """
     for block in blocks:
-        if block.type === "text":
+        if block.type == "text":
             return block.value
     return default
 
@@ -166,21 +142,19 @@ parse = compose(
 
 
 render = compose(
-    join,
+    joinlines,
     blocks_to_markup
 )
 
 
 strip = compose(
-    join,
+    joinlines,
     blocks_to_plain,
-    markup_to_blocks,
-    splitlines
+    parse
 )
 
 
 excerpt = compose(
     find_first_text,
-    markup_to_blocks,
-    splitlines
+    parse
 )

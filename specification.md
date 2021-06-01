@@ -129,7 +129,47 @@ Note that the space after sigil characters is part of the sigil and is not optio
 
 ### Blank lines
 
-Blank lines MUST be ignored, i.e. they MUST NOT be represented in parsed Subtext output. They MAY be added to the source code of documents for the purpose of readability, but are optional.
+Each blank line in Subtext is parsed to a blank block. Blank blocks are for presentational purposes, and have no structural meaning.
+
+For example, the following Subtext document:
+
+```
+I have eaten
+the plums
+that were in
+the icebox
+
+and which
+you were probably
+saving
+for breakfast
+```
+
+Parses to blocks (expressed as Lisp pseudocode):
+
+```
+((text "I have eaten")
+ (text "the plums")
+ (text "that were in")
+ (text "the icebox")
+ (blank)
+ (text "and which")
+ (text "you were probably")
+ (text "saving")
+ (text "for breakfast"))
+```
+
+When parsing Subtext, blank lines are defined as any number of `\s` or `\t` characters, followed by a Universal Newline.
+
+The following sequences of characters are all valid blank lines for the purpose of parsing. (Since space characters are invisible, the following examples are described using escape characters):
+
+```
+\n
+\s\n
+\t\t\r\n
+```
+
+Any `\s` or `\t` characters that may have been part of a blank line during parsing are discarded. Subtext renderers MUST render blank lines as an empty string, joined with a newline `\n` character.
 
 ### Text blocks
 
@@ -210,7 +250,7 @@ Human authors of Subtext SHOULD use `\n` to delimit lines.
 
 Software that writes Subtext MUST use `\n` to delimit lines.
 
-Subtext parsers MUST normalize newlines by interpreting `\r\n` (CRLF) and `\r` (CR) as equivalent to `\n`, using the following sequence of steps:
+Software that parses Subtext will accept several newline characters as line breaks: `\n`, `\r`, or `\r\n` (referred to as "Universal Newlines" elswhere in the spec). Subtext parsers MUST normalize newlines by interpreting `\r\n` (CRLF) and `\r` (CR) as equivalent to `\n`, using the following sequence of steps:
 
 1. If `\r\n` is encountered, it is normalized to be equivalent to `\n` by the parser.
 2. If `\r` is encountered, it is normalized to be equivalent to `\n` by the parser.
@@ -232,6 +272,12 @@ Subtext is valid plain text and plain text is, in most cases, valid Subtext. In 
 ### Specification requirement levels
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
+
+### Universal Newlines
+
+When parsing, Subtext normalizes several line break characters. The following are all treated as line breaks when parsing: `\n`, `\r`, `\r\n`. See [line breaks](#line-breaks) for specific normalization steps.
+
+Note that while Subtext parsers accept Universal Newlines, Subtext renderes only ever write Unix newlines (`\n`).
 
 ## Appendix 2: Further Resources
 
