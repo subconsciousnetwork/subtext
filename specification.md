@@ -159,7 +159,7 @@ Parses to blocks (expressed as Lisp pseudocode):
  (text "for breakfast"))
 ```
 
-When parsing Subtext, blank lines are defined as any number of `\s` or `\t` characters, followed by a Universal Newline.
+When parsing Subtext, blank lines are defined as any number of `\s` or `\t` characters, followed by a [Universal Newline](#universal-newlines).
 
 The following sequences of characters are all valid blank lines for the purpose of parsing. (Since space characters are invisible, the following examples are described using escape characters):
 
@@ -277,7 +277,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 When parsing, Subtext normalizes several line break characters. The following are all treated as line breaks when parsing: `\n`, `\r`, `\r\n`. See [line breaks](#line-breaks) for specific normalization steps.
 
-Note that while Subtext parsers accept Universal Newlines, Subtext renderes only ever write Unix newlines (`\n`).
+Note that while Subtext parsers accept Universal Newlines, Subtext renderers only ever write Unix newlines (`\n`).
 
 ## Appendix 2: Further Resources
 
