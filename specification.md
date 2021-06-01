@@ -196,9 +196,9 @@ Rather than extending the syntax of Subtext to include features like tables, vid
 
 **For future exploration**:
 
-- [Multiple reference links](explorations/multi-ref-links.md)
+- [Multiple reference links](explorations/2021-05-28-multilinks.md)
 - [Generating citations via DOI links](explorations/doi.md)
-- [Wiki links and search links](explorations/wikilink.md)
+- [Wiki links and search links](explorations/2021-05-28-multilinks.md)
 
 ### Heading blocks
 
