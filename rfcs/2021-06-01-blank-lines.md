@@ -3,7 +3,7 @@
 
 # Summary
 
-Blank lines are useful should be preserved.
+Blank lines are useful and should be preserved.
 
 # Motivation
 
