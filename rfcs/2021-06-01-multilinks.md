@@ -202,7 +202,7 @@ Advanatages:
 
 Disadvantages:
 
-- Comma is a [reserved sub-delimiter character in URLs](https://datatracker.ietf.org/doc/html/rfc3986#page-11). That means we MUST delimit by comma AND space.
+- Comma is a [reserved sub-delimiter character in URLs](https://datatracker.ietf.org/doc/html/rfc3986#page-11). That means we MUST delimit by comma AND space. Even so, this ambiguity causes practical problems with parsing in practice ([example](https://github.com/simplecrawler/simplecrawler/issues/413)). 
 - Minor: the delimiter between URL and text is the same, so you have to test the last item to determine if it is a URL.
 
 ## Fancy space disambiguation
