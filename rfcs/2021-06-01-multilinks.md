@@ -158,8 +158,8 @@ space = "\s"
 
 Where:
 
-- `url` may be either a relative file path, or a URL that conforms to the URI syntax described in [IETF RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986)
-- `text` is any number of unicode characters, as described in [IETF RFC 3629](https://datatracker.ietf.org/doc/html/rfc3629), excluding [Universal Newline](../specification.md#universal-line-break).
+- `url` may be either a relative file path, or a URL that conforms to the URI syntax described in [IETF RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986).
+- `text` is any number of unicode characters, as described in [IETF RFC 3629](https://datatracker.ietf.org/doc/html/rfc3629), excluding [Universal Newline](../specification.md#universal-newlines).
 
 
 # Rationale and alternatives
