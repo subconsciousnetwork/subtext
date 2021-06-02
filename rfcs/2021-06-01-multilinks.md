@@ -1,5 +1,5 @@
 - Feature: 2021-06-01-multilinks
-- RFC PR: (fill me in with link to PR)
+- RFC PR: https://github.com/gordonbrander/subtext/pull/14
 - Issue: (fill me in with link to issue, if any)
 
 # Summary
