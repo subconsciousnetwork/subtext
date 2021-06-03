@@ -107,7 +107,7 @@ Link blocks start with `& `. They reference other files within the flow of a Sub
 
 Links are the most important feature in Subtext. By allowing you to reference other documents, you can compose hypertext documents from many smaller documents.
 
-Links can include zero or more pipe-delimited URLs, and an optional text lable. They often take one of the following forms:
+Links can include zero or more pipe-delimited URLs, and an optional text label. They often take one of the following forms:
 
 - URL
 - URL with label
@@ -129,7 +129,7 @@ The client MUST render some kind of user-interactable link to the document. The 
 
 When more than one URL is present, clients MAY choose which URL to use when presenting to the user, when navigating, or when transcluding content.
 
-When no URL is present, but a text lable is present, clients SHOULD choose a resource that best matches the text when navigating to the link, or when transcluding content.
+When no URL is present, but a text label is present, clients SHOULD choose a resource that best matches the text when navigating to the link, or when transcluding content.
 
 For file types it supports, the client MAY render all or part of the linked document in-place (e.g. transclude). For example:
 
