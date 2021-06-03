@@ -338,7 +338,7 @@ Disadvantages:
 
 ## IA Transclusion syntax
 
-IA Writer has a markdown flavor with a custom [Transclusion syntax](https://ia.net/writer/blog/ia-writer-4)
+IA Writer has a markdown flavor with a custom [transclusion syntax](https://ia.net/writer/blog/ia-writer-4):
 
 ```abnf
 translude = path [label]
