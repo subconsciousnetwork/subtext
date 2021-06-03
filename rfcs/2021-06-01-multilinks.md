@@ -341,13 +341,13 @@ Disadvantages:
 IA Writer has a markdown flavor with a custom [transclusion syntax](https://ia.net/writer/blog/ia-writer-4):
 
 ```abnf
-translude = path [label]
+translude = path [label] newline
 path = path-head path-body "." ext
 path-head = "/" / "./" / "../"
 label = '"' text '"' / "(" text ")"
 ```
 
-Where `path-body` is a valid path string and `text` is a sequence of Unicode characters.
+Where `path-body` is a valid path string, `text` is a sequence of Unicode characters, and `newline` is however IA distinguishes between newlines.
 
 There MUST be both a `path-head` and a `"." ext` before IA will recognize the transclude.
 
