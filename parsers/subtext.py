@@ -5,6 +5,7 @@ from functools import reduce
 from collections import namedtuple
 from itertools import groupby
 from io import StringIO
+import re
 
 
 def id(x):
@@ -52,7 +53,40 @@ def joinlines(lines):
     return "\n".join(lines)
 
 
-Block = namedtuple("Block", ("type", "value"))
+def _starts_with_scheme(string):
+    return re.search("^[a-zA-Z][a-zA-Z0-9\+\-\.]*://", string) is not None
+
+
+def _starts_with_path(string):
+    return (
+        string.startswith("./") or
+        string.startswith("../") or
+        string.startswith("/")
+    )
+
+
+def _starts_with_location(string):
+    return _starts_with_path(string) or _starts_with_scheme(string)
+
+
+def _parse_link_body(string):
+    trimmed = string.strip()
+    if _starts_with_location(trimmed):
+        parts = trimmed.split(" ")
+        multiurl = parts[0]
+        label = parts[1] if len(parts) > 1 else ""
+        links = multiurl.split("|")
+        return (tuple(links), label)
+    else:
+        return (tuple(), trimmed)
+
+
+LinkBlock = namedtuple("LinkBlock", ("urls", "label"))
+TextBlock = namedtuple("TextBlock", ("value",))
+HeadingBlock = namedtuple("HeadingBlock", ("value",))
+ListBlock = namedtuple("ListBlock", ("value",))
+QuoteBlock = namedtuple("QuoteBlock", ("value",))
+BlankBlock = namedtuple("BlankBlock", tuple())
 
 
 def _strip_markup_line(line, sigil):
@@ -66,17 +100,18 @@ def markup_to_blocks(lines):
     """
     for line in lines:
         if line.startswith("# "):
-            yield Block("heading", _strip_markup_line(line, "# "))
+            yield HeadingBlock(_strip_markup_line(line, "# "))
         elif line.startswith("- "):
-            yield Block("list", _strip_markup_line(line, "- "))
+            yield ListBlock(_strip_markup_line(line, "- "))
         elif line.startswith("> "):
-            yield Block("quote", _strip_markup_line(line, "> "))
+            yield QuoteBlock(_strip_markup_line(line, "> "))
         elif line.startswith("& "):
-            yield Block("link", _strip_markup_line(line, "& "))
+            urls, label = _parse_link_body(_strip_markup_line(line, "& "))
+            yield LinkBlock(urls, label)
         elif line.strip() == "":
-            yield Block("blank", "")
+            yield BlankBlock()
         else:
-            yield Block("text", line)
+            yield TextBlock(line)
 
 
 def blocks_to_markup(blocks):
@@ -84,15 +119,20 @@ def blocks_to_markup(blocks):
     Render an iterable of blocks to an iterable of markup lines
     """
     for block in blocks:
-        if block.type == "heading":
+        block_type = type(block)
+        if block_type is HeadingBlock:
             yield f"# {block.value}"
-        elif block.type == "list":
+        elif block_type == ListBlock:
             yield f"- {block.value}"
-        elif block.type == "quote":
+        elif block_type == QuoteBlock:
             yield f"> {block.value}"
-        elif block.type == "link":
-            yield f"& {block.value}"
-        elif block.type == "blank":
+        elif block_type == LinkBlock:
+            if len(block.urls):
+                multiurl = "|".join(block.urls)
+                yield f"& {multiurl} {block.label}"
+            else:
+                yield f"& {block.label}"
+        elif block_type == BlankBlock:
             yield ""
         else:
             yield f"{block.value}"
