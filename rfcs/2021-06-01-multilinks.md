@@ -147,12 +147,12 @@ Each link form is some combination of zero or more pipe-delimited URLs, followed
 A link block has the following syntax in ABNF notation, as described in [IETF RFC 5234](https://tools.ietf.org/rfc/rfc5234):
 
 ```abnf
-link-block = "&" *space link-block-body univeral-newline
+link-block = "&" *space link-block-body universal-newline
 link-block-body = url / labeled-url / url-group / labeled-url-group / text
-labeled-url = url space text
+labeled-url = url 1*space text
 url-group = *(url "|") url
-labeled-url-group = url-group space text
-univeral-newline = "\r\n" / "\n" / "\r"
+labeled-url-group = url-group 1*space text
+universal-newline = "\r\n" / "\n" / "\r"
 space = "\s"
 ```
 
