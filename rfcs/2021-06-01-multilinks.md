@@ -336,6 +336,23 @@ Disadvantages:
 
 # Prior art
 
+## IA Transclusion syntax
+
+IA Writer has a markdown flavor with a custom [Transclusion syntax](https://ia.net/writer/blog/ia-writer-4)
+
+```abnf
+translude = path [label]
+path = path-head path-body "." ext
+path-head = "/" / "./" / "../"
+label = '"' text '"' / "(" text ")"
+```
+
+Where `path-body` is a valid path string and `text` is a sequence of Unicode characters.
+
+There MUST be both a `path-head` and a `"." ext` before IA will recognize the transclude.
+
+## HTML tags with multiple link sources
+
 - HTML5 srcset attribute. See [srcset spec](https://html.spec.whatwg.org/multipage/images.html#srcset-attribute), [srcset explainer on MDN](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images#resolution_switching_different_sizes)
   - Note that srcset delimits by comma, which is a reserved URL character. This ambiguity causes practical problems with parsing ([example](https://github.com/simplecrawler/simplecrawler/issues/413)). If we wanted to use a comma, we could require the comma be followed by a space.
 - [source tag](https://html.spec.whatwg.org/multipage/embedded-content.html#the-source-element) in picture tag
