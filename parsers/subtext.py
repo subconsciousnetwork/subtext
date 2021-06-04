@@ -72,7 +72,7 @@ def _starts_with_location(string):
 def _parse_link_body(string):
     trimmed = string.strip()
     if _starts_with_location(trimmed):
-        parts = trimmed.split(" ")
+        parts = trimmed.split(" ", 1)
         multiurl = parts[0]
         label = parts[1] if len(parts) > 1 else ""
         links = multiurl.split("|")
@@ -150,17 +150,13 @@ def blocks_to_plain(blocks):
 BlockGroup = namedtuple("BlockGroup", ("type", "value"))
 
 
-def _get_block_type(block):
-    return block.type
-
-
 def group_blocks(blocks):
     """
     Group contiguous blocks by type.
     This may be useful if you want to move or manipulate contiguous
     ranges of blocks together, such as a series of list items.
     """
-    for block_type, block_group in groupby(blocks, _get_block_type):
+    for block_type, block_group in groupby(blocks, type):
         yield BlockGroup(block_type, tuple(block_group))
 
 
