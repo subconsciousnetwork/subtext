@@ -67,18 +67,32 @@ Subtext link blocks allow you to reference other files by path, or by URL. Files
 
 Think of Subtext as hypertext glue that lets you compose larger documents from smaller documents.
 
-A basic link is just a link sigil (`&`) followed by a path or URL. These are all valid link blocks:
+A basic link is just a link sigil (`&`) followed by a path or URL. These are both valid link blocks:
 
 ```
-& example.png
-& ../example.png
+& ./example.png
 & http://example.com
 ```
 
-Links may also include a label. Labels are a people-friendly discription of the link. They can be used as a text-based fallback when a client doesn't know how to transclude a given type of file. Labels come after the URL, like this:
+Links may also include a label. Labels are a people-friendly discription of the link. They can be used as a text-based fallback when a client doesn't know how to transclude a given type of file. Labels come after the path or URL, like this:
 
 ```
 http://example.com Example label
+```
+
+**Note**: URLs must begin with a scheme (such as `http://`). Any spaces in a URL must be percent-encoded. Local file paths must start with a path component (`./`, `/`, `../`). You can have spaces in a local file path, but they must end with a file extension (such as `.png` or `.csv`). This keeps paths and URLs from getting confused with labels.
+
+So this works:
+
+```
+& ./i can haz cheezburger.png I can haz?
+```
+
+...but these don't, because it's not clear where the file ends and the label text begins:
+
+```
+& i can haz cheezburger.png I can haz?
+& ./i can haz cheezburger I can haz?
 ```
 
 You can also write a link with only a label. We call this a wikilink. Clients may use the label to decide on a resource they think matches best. This is analogous to the way `[[wiklink]]` tags work in [Wiki markup](https://en.wikipedia.org/wiki/Help:Wikitext).
@@ -107,18 +121,16 @@ Link blocks start with `& `. They reference other files within the flow of a Sub
 
 Links are the most important feature in Subtext. By allowing you to reference other documents, you can compose hypertext documents from many smaller documents.
 
-Links can include zero or more pipe-delimited URLs, and an optional text label. They often take one of the following forms:
+Links take one of the following forms:
 
-- URL
-- URL with label
-- Multiple URLs
-- Multiple URLs with label
+- One or more URLs, delimited by a pipe, with optional label
+- A local file path, with optional label.
 - Label only (wikilink)
 
 The following are all valid URLs
 
 ```
-& example.png
+& ./example.png
 & http://example.com
 & http://example.com Example label
 & http://example.com|ipfs://example|dat://example Example label
@@ -147,13 +159,17 @@ Each link form is some combination of zero or more pipe-delimited URLs, followed
 A link block has the following syntax in ABNF notation, as described in [IETF RFC 5234](https://tools.ietf.org/rfc/rfc5234):
 
 ```abnf
-link-block = "&" *space link-block-body universal-newline
-link-block-body = url / labeled-url / url-group / labeled-url-group / text
-labeled-url = url 1*space text
+link-block = "&" *SP link-block-body universal-newline
+link-block-body = url-group [ 1*SP text ] / path [ 1*SP text ] / text
+
 url-group = *(url "|") url
-labeled-url-group = url-group 1*space text
-universal-newline = "\r\n" / "\n" / "\r"
-space = "\s"
+
+path = path-head 1*path-char "." ext
+path-head = "/" / "./" / "../"
+path-char = ALPHA / DIGIT / "." / "_" / "-" / SP
+ext = "." 1*( ALPHA / DIGIT / "_" / "-" )
+
+universal-newline = CRLF / LF / CR
 ```
 
 Where:

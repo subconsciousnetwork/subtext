@@ -53,8 +53,13 @@ def joinlines(lines):
     return "\n".join(lines)
 
 
+_SCHEME_RE = re.compile(
+    "^[a-zA-Z][a-zA-Z0-9\+\-\.]*://"
+)
+
+
 def _starts_with_scheme(string):
-    return re.search("^[a-zA-Z][a-zA-Z0-9\+\-\.]*://", string) is not None
+    return _SCHEME_RE.match(string) is not None
 
 
 def _starts_with_path(string):
@@ -64,19 +69,29 @@ def _starts_with_path(string):
         string.startswith("/")
     )
 
-
-def _starts_with_location(string):
-    return _starts_with_path(string) or _starts_with_scheme(string)
-
+_PATH_RE = re.compile(
+    "^((?:\./|\.\./|/)[a-zA-Z0-9-_\s\./]+\.[a-zA-Z0-9-_]+)(?:\s+(.+))?"
+)
 
 def _parse_link_body(string):
     trimmed = string.strip()
-    if _starts_with_location(trimmed):
+    if _starts_with_scheme(trimmed):
+        # Split on first space
         parts = trimmed.split(" ", 1)
         multiurl = parts[0]
         label = parts[1] if len(parts) > 1 else ""
         links = multiurl.split("|")
         return (tuple(links), label)
+    elif _starts_with_path(trimmed):
+        match = _PATH_RE.match(trimmed)
+        if match:
+            path = match.group(1)
+            label = match.group(2) or ""
+            return ((path,), label)
+        else:
+            # Could not parse. Treat whole body as label.
+            # This case should only be hit if file name does not have ext.
+            return ((trimmed,), "")
     else:
         return (tuple(), trimmed)
 
