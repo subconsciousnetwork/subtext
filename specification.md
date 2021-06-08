@@ -273,6 +273,10 @@ Subtext is valid plain text and plain text is, in most cases, valid Subtext. In 
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
 
+### Syntax Notation
+
+This specification uses Augmented Backus-Naur Form (ABNF) to describe syntax. ABNF is specified in [IETF RFC 2234](https://datatracker.ietf.org/doc/html/rfc2234).
+
 ### Universal Newlines
 
 When parsing, Subtext normalizes several line break characters. The following are all treated as line breaks when parsing: `\n`, `\r`, `\r\n`. See [line breaks](#line-breaks) for specific normalization steps.
