@@ -268,6 +268,8 @@ Like Twitter, clients can visually enhance both URLs and `/slashlinks` in a vari
 
 # Future possibilities
 
+The introduction of slashlinks suggests that we might also introduce `#hashtags` and `@mentions`. I think this is a neat idea, but want to consider value add before committing to this approach.
+
 Two more extensions could expand the capabilities of the syntax to something closer to the current approach:
 
 Angle-bracket links could allow for labels after a pipe `<https://example.com | Example>`. This would enable nice "prose links" for rendering and publishing, when you want to make a distinction between view-mode and edit-mode. I lean toward introducing this, but don't want to start here, since it doesn't add much for note-taking usecases.
