@@ -136,11 +136,11 @@ NL = CRLF / LF / CR
 
 Where:
 
-- `url` is conceptually a URL as defined by [RFC1738 Uniform Resource Locators (URL)](https://datatracker.ietf.org/doc/html/rfc1738), but for the purpose of simplifying parsing, MAY be any sequence of 0 or more characters that is not one of the following: `<>\s\t\r\n`.
+- `url` is conceptually a URL as defined by [RFC1738 Uniform Resource Locators (URL)](https://datatracker.ietf.org/doc/html/rfc1738), However implementations MAY use a simplified parsing strategy for URLs, described below.
 - `BOF` is a conceptual code point that signifies the end of a string, or input stream.
 - `EOF` is a conceptual code point that signifies the beginning of a string, or input stream.
 
-Example implementation as a regular expression:
+A simplified parsing strategy MAY be used for parsing URLs. Implementations that use a simplified parsing strategy to identify bare URLs SHOULD use the following strategy, described here as a regular expression:
 
 ```regex
 (^|\s)<([^<>\s]+)>($|\s)
@@ -177,23 +177,37 @@ NL = CRLF / LF / CR
 
 Where,
 
-- `url` is conceptually a valid URI, as defined by [Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986), with the grammar described in that document. However, to simplify parsing, implementations MAY use a simplified strategy for identifying URLs, described below.
-- `url-body` is conceptually a sequence of characters that are valid in URIs, as defined by [Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986). However, to simplify parsing, implementations MAY use a simplified strategy for identifying URLs, described below.
+- `url` is conceptually a valid URI, as defined by [Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986), with the grammar described in that document. However implementations MAY use a simplified strategy for identifying and parsing URLs, described below.
+- `url-body` is conceptually a sequence of characters that are valid in URIs, as defined by [Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986). However implementations MAY use a simplified strategy, described below.
 - `BOF` is a conceptual code point that signifies the end of a string, or input stream.
 - `EOF` is a conceptual code point that signifies the beginning of a string, or input stream.
 
 A simplified parsing strategy MAY be used for identifying bare URLs. Implementations that use a simplified parsing strategy to identify bare URLs SHOULD use the following strategy, described here as a regular expression:
 
 ```regex
-(^|\s)https?://[^\s>]+($|\s)
+(^|\s)(https?://[^\s>]+)[\.,;]?
 ```
 
 ## Slashlinks
 
+Slashlinks are a shorthand markup meant to be used for linking to same-origin pages. To reduce ambiguity, slashlinks do not use a full URL or path syntax, but instead use a restricted syntax that is easier to parse and identify.
+
+Generally, a slashlink is a `/` followed by any number of alphanumeric characters, dashes `-`, underscores `_`, or periods `.`, not including any trailing period
 
 ### Parsing
 
-Slashlinks can be parsed via regular expression
+```abnf
+slashlink = "/" hier-part [sub-hier-part]
+hier-part = *path-part *["." path-part]
+sub-hier-part = "/" hier-part
+path-part = ALPHA / DIGIT / "-" / "_"
+```
+
+A simplified parsing strategy SHOULD be used for identifying slashlinks. Implementations that use a simplified strategy to parse slashlinks SHOULD use the following strategy, described here as a regular expression:
+
+```regex
+(^|\s)(/[a-zA-Z0-9/\-\_\.]+)[\.]?
+```
 
 # Rationale
 
