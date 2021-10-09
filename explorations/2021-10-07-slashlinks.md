@@ -1,0 +1,264 @@
+- Feature: 2021-10-07-slashlinks
+- RFC PR: 
+- Issue: 
+
+# Summary
+
+Rethink links in Subtext. Introduce a simpler syntax that works inline, block-level, and removes ambiguity from syntax.
+
+# Motivation
+
+In the design of Subtext, we have considered two kinds of links: block links, and wikilinks.
+
+Block links:
+
+```
+& https://example.com Example page
+& ./example file.txt Example page 
+& Example page
+```
+
+Wikilinks:
+
+```
+[[https://example.com | Example page]]
+[[./example file.txt | Example page]]
+[[Example page | Example page synonym]]
+```
+
+Block links are simpler, and in keeping with Subtext's block-level design. Wikilinks are more common. But both have the same subtle issue: path ambiguity. Each of these markups supports 3 use-cases in one syntax:
+
+- URL with optional label
+- Path with optional label
+- Label with optional alternate label (wikilink)
+
+Because they support multiple cases with the same syntax, parsers must differentiate the cases in order to use the data they contain.
+
+Paths may be disambiguated from labels by requiring a `/` or `./` at the beginning, and an extension at the end, and this is currently what Subtext does. It is tricky, but doable with regular expressions, or a parser.
+
+However, URLs cannot be reasonably disambiguated from labels without either getting false-positives, or resorting to hard-coding protocols (`http://`). This is because general [URL syntax](https://datatracker.ietf.org/doc/html/rfc3986), beyond HTTP, is extremely open-ended, and more or less just defined by `<protocol>:<body>`.
+
+Having to hardcode protocols as part of the language specification would be unfortunate. It prevents Subtext from being able to reference new and experimental protocols, such as p2p protocols like `ipfs:` and `dat:`.
+
+Other motivations that inspired this rethink:
+
+- Block links are unfamiliar, and not necessarily the easiest to visually scan.
+- Wikilinks are visually noisy, abliet common.
+
+Is there no simpler way forward?
+
+# Proposed solution
+
+A quick preview:
+
+```
+Links are wrapped in angle brackets, like this <https://example.com>, and can appear anywhere in text.
+
+You can also just paste bare links, like https://example.com, and Subtext will try to sniff them out and automatically link them.
+
+Subtext might not be able to sniff out exotic protocols like <ipfs://asdfasdfasdfasdf>. You can use angle brackets for those cases.
+
+This is a /slashlink, it is a shortcut for linking to an /internal-page.
+```
+
+This proposal does a radical rethink of Subtext link syntax, proposing to replace the current block links with something more limited, but also more obvious, easier to parse, and unambiguous.
+
+1. Links can be embedded as-is anywhere in text blocks, and are wrapped in angle brackets. `<https://example.com>`.
+2. Parsers MAY autolink bare links `https://example.com`. This almost certainly means hard-coding a few protocols to sniff them out, so it is left as suggested, but optional for implementations to do this.
+3. You can link to internal pages using a shortcut `/link-path`, that is, a slash, followed by the path you wish to link to.
+
+# Guide-level explanation
+
+Wrapping URLs in angle brackets (`<` `>`) will cause them to turn into links. For example:
+
+```
+Links are wrapped in angle brackets, like this <https://example.com>, and can appear anywhere in text.
+
+You can also reference links with exotic protocols like <doi:10.1000/182>.
+```
+
+If you omit the brackets, most Subtext parsers will try to sniff out URLs and automatically link them, anyway.
+
+```
+You can also just paste bare links, like https://example.com, and Subtext will try to sniff them out and automatically link them.
+```
+
+Note you must include the protocol (the `http://` bit) for Subtext to sniff a bare URL out. Most Subtext parsers can automatically detect common protocols like `http` in this way, but not every protocol will work. For exotic protocols, just wrap the URL in `<` `>` angle brackets.
+
+Subtext also has a shortcut for linking to local pages, called "slashlinks". Slashlinks are like `#hashtags`, or `@mentions` except instead of starting with a `#` or an `@`, they start with a `/`, like this: `/link`
+
+Here are some examples of slashlinks:
+
+```
+/evolution
+/requisite-variety
+/DesignPatterns
+/2021-10-09
+```
+
+Slashlinks can't include spaces. It's considered good practice to use dashes `-` instead. Also, slashlinks are case-insensitive. That is, `/Evolution` and `/evolution` reference the same thing. Feel free to write whatever looks better to you.
+
+You can write a slashlink anywhere in text, inline, or on its own line.
+
+```
+"Access to tools" was a slogan on the cover of the /whole-earth-catalog, a collection of /DIY books and tools, mostly focused on /fundamental-needs.
+```
+
+Slashlinks can also include hierarchical sub-parts, just like a URL:
+
+```
+/vaclav-smil/energy-and-civilization
+/climate/carbon-sinks
+```
+
+# Reference-level explanation
+
+## URLs
+
+URLs are wrapped in angle brackets, and can appear anywhere within a text, link, or quote block:
+
+```
+Links are wrapped in angle brackets, like this <https://example.com>, and can appear anywhere in text.
+
+You can also reference links with exotic protocols like <doi:10.1000/182>.
+```
+
+### Parsing
+
+Grammar:
+
+```abnf
+link = WB "<" url ">" WB
+WB = SP / NL / BOF / EOF
+SP = "\s" / "\t"
+NL = CRLF / LF / CR
+```
+
+Where:
+
+- `url` is conceptually a URL as defined by [RFC1738 Uniform Resource Locators (URL)](https://datatracker.ietf.org/doc/html/rfc1738), but for the purpose of simplifying parsing, MAY be any sequence of 0 or more characters that is not one of the following: `<>\s\t\r\n`.
+- `BOF` is a conceptual code point that signifies the end of a string, or input stream.
+- `EOF` is a conceptual code point that signifies the beginning of a string, or input stream.
+
+Example implementation as a regular expression:
+
+```regex
+(^|\s)<([^<>\s]+)>($|\s)
+```
+
+## Bare URLs
+
+Subtext parsers MUST implement automatic linking for certain URLs that are not in brackets.
+
+```
+You can also just paste bare links, like https://example.com, and Subtext will try to sniff them out and automatically link them.
+```
+
+The grammar for URLs defined by [RFC1738 Uniform Resource Locators (URL)](https://datatracker.ietf.org/doc/html/rfc1738) is extremely general, and not practical to sniff out without false positives. To avoid ambiguities and false positives, autolinking is restricted to a few well-known protocols that can more easily be identified:
+
+- `http`
+- `https`
+
+### Parsing
+
+`http` and `https` bare URLs are conceptually valid URIs as defined by [Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986).
+
+Parsing grammar:
+
+```abnf
+link = WB url WB
+url = http-url / https-url
+http-url = "http" ":" "/" url-body
+https-url = "https" ":" "/" url-body
+WB = SP / NL / BOF / EOF
+SP = "\s" / "\t"
+NL = CRLF / LF / CR
+```
+
+Where,
+
+- `url` is conceptually a valid URI, as defined by [Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986), with the grammar described in that document. However, to simplify parsing, implementations MAY use a simplified strategy for identifying URLs, described below.
+- `url-body` is conceptually a sequence of characters that are valid in URIs, as defined by [Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986). However, to simplify parsing, implementations MAY use a simplified strategy for identifying URLs, described below.
+- `BOF` is a conceptual code point that signifies the end of a string, or input stream.
+- `EOF` is a conceptual code point that signifies the beginning of a string, or input stream.
+
+A simplified parsing strategy MAY be used for identifying bare URLs. Implementations that use a simplified parsing strategy to identify bare URLs SHOULD use the following strategy, described here as a regular expression:
+
+```regex
+(^|\s)https?://[^\s>]+($|\s)
+```
+
+## Slashlinks
+
+
+### Parsing
+
+Slashlinks can be parsed via regular expression
+
+# Rationale
+
+This is a radical refactoring of Subtext, and presents a different set of tradeoffs, with, I think some meaningful advantages for our goals:
+
+- Markup for notes
+- YAGNI
+- Do the simplest thing that could possibly work
+
+Importantly, ordinary URLs *just work*, without any special syntax.
+
+- For well-known protocols, you can just paste URLs in verbatim.
+- For exotic protocols, you can wrap in angle-brackets. This is a common convention for disambiguating URLs and addresses in plain text, used in email `to:` fields and elsewhere.
+
+The biggest change is in removing the notion of label-only links, or wikilinks, and introducing slashlinks.
+
+To recap, wikilinks wrap a range of plain text, marking it as something that should be linked. It is up to clients to normalize this text in order to make it into a useful URL or slug. Since the wikilink is doing two jobs (prose text and address), there are ambiguities around things like pluralization and synonyms. This is often solved with `|` which allows an alternate view-facing label for the wikilink. However, Wikilinks share the same syntax for external links. This leads to ambiguities distinguishing between URLs, paths, and wikilinks. The only reasonable way out is to hard-code protocols into the sniffing logic.
+
+By contrast, slashlinks just represent a path. It is an unambiguous slug, or ID for a local resource.
+
+Pros:
+
+- Extremely simple syntax to write and to parse
+- It is unambiguous what resource you are referencing
+- It can be used as a primary key in a database
+- Since it isn't prose, you don't have to worry about pluralizations and synonyms
+- You can efficiently search for it in text, without word stemming
+- Works the same way as a URL path.
+
+Cons:
+
+- Not ordinary prose
+
+My sense is that this con is a worthy tradeoff, as it leads to most of the useful pros.
+
+The parallel to draw is not to `[[wikilinks]]`, but to `#hashtags` and `@mentions`, which have been a successful pattern on Twitter and also many other products like Slack, Microsoft Teams, Discord, etc.
+
+This leads to a different style of note-taking focused on simple prose, with `/slashlinks` peppered throughout the text, at the end of paragraphs, or on their own line.
+
+The success of `#hashtags` and `@mentions` lies in there simplicity. They are simple to write, simple to understand, and simple to implement anywhere. `/slashlinks` share this simplicity. They're also visually simple, and easy to scan with your eyeball parsers.
+
+There's also an obvious visual connection between `/slashlinks` and full URLs... they're similar, and they in similar ways. If the path is too complex to discribe with a slashlink, the syntax suggests you can just use a full URL instead, and this is true!
+
+# Drawbacks
+
+The downside of `#hashtags` and `@mentions` is that they "look like code". Well, so do `[[wikilinks]]` and other syntaxes, unless you differentiate between "view mode" and "write mode", a distinction we're trying to avoid in a markup designed for note-taking.
+
+Like Twitter, clients can visually enhance both URLs and `/slashlinks` in a variety of ways:
+
+- Transforming them into links (of course)
+- Rendering transcludes below
+- Hiding them in some cases, when in view mode
+
+
+# Unresolved questions
+
+...
+
+# Future possibilities
+
+Two more extensions could expand the capabilities of the syntax to something closer to the current approach:
+
+Angle-bracket links could allow for labels after a pipe `<https://example.com | Example>`. This would enable nice "prose links" for rendering and publishing, when you want to make a distinction between view-mode and edit-mode. I lean toward introducing this, but don't want to start here, since it doesn't add much for note-taking usecases.
+
+Angle-bracket links could allow relative URLs, or more complex slashlinks: `</example | Example>`. For example, we could allow spaces, or other percent-encodable characters to be written verbatim when in angle brackets.
+
+# References
+
