@@ -190,23 +190,24 @@ A simplified parsing strategy MAY be used for identifying bare URLs. Implementat
 
 ## Slashlinks
 
-Slashlinks are a shorthand markup meant to be used for linking to same-origin pages. To reduce ambiguity, slashlinks do not use a full URL or path syntax, but instead use a restricted syntax that is easier to parse and identify.
+Slashlinks are a shorthand markup meant to be used for linking to same-origin pages. To reduce ambiguity, slashlinks do not use full URL or path syntax, but instead use a restricted syntax that is easier to parse and identify.
 
-Generally, a slashlink is a `/` followed by any number of alphanumeric characters, dashes `-`, underscores `_`, or periods `.`, not including any trailing period
+Generally, a slashlink is a `/` followed by any number of alphanumeric characters, dashes `-`, underscores `_`.
+
+Implementations are free to interpret the slashlink in whatever way works best for their goals. For example, the slashlink `/foo/bar` does not have to reference a file at path `/foo/bar`. For example, it could be used as a slug for a database lookup, or expanded into a file path, such as `~/Documents/Subconscious/foo/bar.subtext`. These are just examples.
 
 ### Parsing
 
 ```abnf
 slashlink = "/" hier-part [sub-hier-part]
-hier-part = *path-part *["." path-part]
+hier-part = ALPHA / DIGIT / "-" / "_"
 sub-hier-part = "/" hier-part
-path-part = ALPHA / DIGIT / "-" / "_"
 ```
 
-A simplified parsing strategy SHOULD be used for identifying slashlinks. Implementations that use a simplified strategy to parse slashlinks SHOULD use the following strategy, described here as a regular expression:
+Parsing slashlinks can be achieved via the following regular expression:
 
 ```regex
-(^|\s)(/[a-zA-Z0-9/\-\_\.]+)[\.]?
+(^|\s)(/[a-zA-Z0-9/\-\_]+)($|\s)
 ```
 
 # Rationale
