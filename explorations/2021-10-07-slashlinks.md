@@ -1,6 +1,5 @@
 - Feature: 2021-10-07-slashlinks
-- RFC PR: 
-- Issue: 
+- RFC PR: https://github.com/gordonbrander/subtext/pull/18
 
 # Summary
 
