@@ -41,9 +41,7 @@ Subtext is designed to be used in a wide range of settings, from simple command-
 
 ### Text blocks
 
-One line is one block of Subtext. This means you write text extactly the way you would anyway.
-
-Here are two blocks:
+One line is one block in Subtext. This means you write text the way you would anyway. For example, here are two blocks:
 
 ```
 Delays in systems cause waves.
@@ -58,7 +56,7 @@ Block 1
 Block 2
 ```
 
-It's nice to put a blank line between text blocks for readability, though.
+Usually, it's nice to put a blank line between text blocks for readability, though.
 
 ### Heading blocks
 
@@ -97,6 +95,10 @@ Quote blocks start with a `>`
 ```
 
 The space after the `>` is optional, but it's nice to include it for readability.
+
+### Blank lines
+
+Blank lines have no meaning in Subtext, but can be added for source code readability. Subtext renderers are free to ignore them.
 
 ## Links
 
