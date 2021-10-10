@@ -62,50 +62,50 @@ This is a /slashlink, it is a shortcut for linking to an /internal-page.
 
 This proposal does a radical rethink of Subtext link syntax, proposing to replace the current block links with something more limited, but also more obvious, easier to parse, and unambiguous.
 
-1. Links can be embedded as-is anywhere in text blocks, and are wrapped in angle brackets. `<https://example.com>`.
-2. Parsers MAY autolink bare links `https://example.com`. This almost certainly means hard-coding a few protocols to sniff them out, so it is left as suggested, but optional for implementations to do this.
-3. You can link to internal pages using a shortcut `/link-path`, that is, a slash, followed by the path you wish to link to.
+2. URLs `https://example.com` can be embedded anywhere in text, list, and quote blocks. Parsers MUST autolink bare `http` and `https` links.
+1. Links can also be wrapped in angle brackets `<https://example.com>` and embedded anywhere in text, list, and quote blocks. This allows you to write non-http URLs unambiguously, such as `<doi:10.1000/182>`.
+3. Internal pages can be linked to via a shortcut syntax, `/slashlink`, that is, a slash, followed by the path you wish to link to.
 
 # Guide-level explanation
 
-Wrapping URLs in angle brackets (`<` `>`) will cause them to turn into links. For example:
+Subtext will detect any http URLs, and automatically link them.
 
 ```
-Links are wrapped in angle brackets, like this <https://example.com>, and can appear anywhere in text.
-
-You can also reference links with exotic protocols like <doi:10.1000/182>.
+Links like https://example.com will be automatically linked.
 ```
 
-If you omit the brackets, most Subtext parsers will try to sniff out URLs and automatically link them, anyway.
+Note you must include the protocol (the `http://` bit) for Subtext to sniff out the URL.
+
+Subtext parsers can automatically detect `http` and `https` links this way, but not every protocol will work. For exotic protocols wrap the URL in `<` `>` angle brackets.
 
 ```
-You can also just paste bare links, like https://example.com, and Subtext will try to sniff them out and automatically link them.
-```
+Link unusual URLs like <doi:10.1000/182> by wrapping them in angle brackets. 
 
-Note you must include the protocol (the `http://` bit) for Subtext to sniff a bare URL out. Most Subtext parsers can automatically detect common protocols like `http` in this way, but not every protocol will work. For exotic protocols, just wrap the URL in `<` `>` angle brackets.
+This works for any kind of URL <https://example.com>.
+```
 
 Subtext also has a shortcut for linking to local pages, called "slashlinks". Slashlinks are like `#hashtags`, or `@mentions` except instead of starting with a `#` or an `@`, they start with a `/`, like this: `/link`
 
 Here are some examples of slashlinks:
 
 ```
+This is a /slashlink. A few more:
+
 /evolution
 /requisite-variety
 /DesignPatterns
-/2021-10-09
 ```
 
-Slashlinks can't include spaces. It's considered good practice to use dashes `-` instead. Also, slashlinks are case-insensitive. That is, `/Evolution` and `/evolution` reference the same thing. Feel free to write whatever looks better to you.
-
-You can write a slashlink anywhere in text, inline, or on its own line.
+Slashlinks can't include spaces. It is considered good practice to use dashes `-` instead. Also, slashlinks are case-insensitive. That is, `/Evolution` and `/evolution` reference the same thing. Feel free to write whatever looks better to you.
 
 ```
-"Access to tools" was a slogan on the cover of the /whole-earth-catalog, a collection of /DIY books and tools, mostly focused on /fundamental-needs.
+/whole-earth-catalog, a collection of /DIY books and tools.
 ```
 
-Slashlinks can also include hierarchical sub-parts, just like a URL:
+Slashlinks can also include hierarchical sub-parts, just like a URL. This can be useful when two concepts from different fields share the same name.
 
 ```
+/journal/2021-10-09
 /vaclav-smil/energy-and-civilization
 /climate/carbon-sinks
 ```
