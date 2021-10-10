@@ -5,45 +5,43 @@
 
 Subtext is markup for note-taking. It aims to add just the tiniest bit of structure on top of plain text, to make notes more useful.
 
-**Warning**: Subtext is an experiment, NOT a finished language proposal. We are actively putting it through its paces using practical prototypes. It may change in radical and breaking ways between now and a first stable release. 
+**Warning**: Subtext is an experiment, NOT a finished language proposal. We are actively putting it through its paces using practical prototypes. It may change in radical and breaking ways between now and a first stable release.
 
-## A bit of Subtext
+## Introduction
 
-Subtext is markup that is barely there—just the *tiniest* bit of structure on top of plain text, to make it more useful. Simple for people, simple for computers, and meaningful for both.
+Subtext is a text-based, line-oriented hypertext format. It is designed with note-taking in mind. It has a simple, people-friendly syntax that is easy to read, and difficult to mess up.
+
+Subtext markup is made up of ordinary lines of text, which are interpreted as a list of blocks. Lines that are prefixed with magic "sigil" characters are treated as special blocks. Lines without sigils are treated as text blocks. Empty lines are ignored. Here's a quick sample:
 
 ```
 # Heading
 
 Plain text.
 
-URLs like https://example.com are automatically linked.
-
-You can also link to other notes using /slashlinks.
-
 - List item
 - List item
 
 > Quoted text
+
+URLs like https://example.com are automatically linked.
+
+You can also link to local pages using short /slashlinks.
 ```
 
-## Introduction
-
-Subtext represents block-oriented documents as line-oriented markup. Each line is treated as a distinct block of content. The type of a line is determined by a "sigil character", like `#`, or `>`, at the front of the line. If a line doesn’t have a sigil character, it is treated as plain text.
-
-Some of the earliest hypertext proposals were block-oriented, including Ted Nelson's ELF (Nelson, 1965). Block-oriented documents have also independently evolved within many contemporary tools-for-thought, including Notion, Roam, and Ward Cunningham's Federated Wiki. Why does this pattern keep re-emerging?
-
-Blocks are like thought legos. They turn ideas into data that can be remixed into new ideas. This is very valuable when building "Tools for Thought" — tools that augment our note-taking and writing. Using Subtext you can do things like:
+Subtext is barely there—just the tiniest bit of formatting on top of plain text. More importantly, Subtext adds structure to plain text so you can build tools to do more with it. Things like:
 
 - Excerpt a document by taking the first text block
 - Select all quotes from a collection of documents
 - Select all links, and generate a link graph for a collection of documents
 - Find all backlinks and append them to the document as links
 
+Subtext is designed to be used in a wide range of settings, from simple command-line utilities, to advanced clients. It is extremely easy to parse, and can be rendered in a single pass, or even streamed.
+
 ## Blocks
 
 ### Text blocks
 
-One line = one block in Subtext. This means you write text extactly the way you would anyway.
+One line is one block of Subtext. This means you write text extactly the way you would anyway.
 
 Here are two blocks:
 
@@ -53,14 +51,14 @@ Delays in systems cause waves.
 You can only smooth them out with stocks that match the scale of the delay-waves.
 ```
 
-One line = one block also means that blank lines are optional. This is also two blocks.
+One line is one block, so blank lines are optional. This is also two blocks:
 
 ```
 Block 1
 Block 2
 ```
 
-It's nice to place a blank line between text blocks for readability, though.
+It's nice to put a blank line between text blocks for readability, though.
 
 ### Heading blocks
 
