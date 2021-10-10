@@ -80,11 +80,9 @@ Evolution is a behavior that emerges in any system with:
 
 Evolutionary systems often generate unexpected solutions. Nature selects for good enough.
 
-> There is no such thing as advantageous in a general sense. There is only advantageous for the circumstances you’re living in. (Olivia Judson, Santa Fe Institute)
+> There is no such thing as advantageous in a general sense. There is only advantageous for the circumstances you’re living in. (Olivia Judson, Santa Fe Institute https://overcast.fm/+UtNTAcN2Y/13:36)
 
-Evolving systems exist in punctuated equilibrium.
-
-& punctuated-equilibrium.st
+Evolving systems exist in /punctuated-equilibrium.
 
 # Questions
 
@@ -94,22 +92,20 @@ Evolving systems exist in punctuated equilibrium.
 
 # See also
 
-& https://en.wikipedia.org/wiki/Evolutionary_systems
+https://en.wikipedia.org/wiki/Evolutionary_systems
 ```
 
 ## Line-orientation
 
 Subtext is line-oriented. Lines can be parsed to blocks by checking if the leading characters of the line match one of a set of special character sequences. These special character sequences are called "sigils", and determine the block type of the line.
 
-All sigils currently happen to be two characters: one character plus a space. In future, we may introduce multi-character sigils, so implementors MUST NOT determine block type by sampling only first two characters. However, we will try to avoid multi-character sigils for reasons of aesthetics.
+> Design note (non-normative): All sigils currently happen to be one characters. In future, we may introduce multi-character sigils. However, we will try to avoid multi-character sigils for reasons of aesthetics.
 
-**TODO**: fix an upper limit on sigil length?
-
-Note that the space after sigil characters is part of the sigil and is not optional. If the sigil character does not end in a space, it is not a sigil character.
+Note that the space after the sigil characters is NOT part of the sigil and is optional, but recommended.
 
 ```
 # This is a heading
-#This is just text with a weird character in front.
+#This is also a heading
 ```
 
 ## Core block types
@@ -119,12 +115,6 @@ Note that the space after sigil characters is part of the sigil and is not optio
 Text blocks are the fundamental line type. Any line which does not match the definition of another line type defaults to being a text line.
 
 Text lines SHOULD be presented to the user in a manner suitable for general reading. This SHOULD include wrapping text, where appropriate. Text lines MAY be formatted for reading at the client's discretion. For example, clients MAY choose to display text with variable fonts, leading and font-size appropriate to the context.
-
-**For future exploration**:
-
-- [Multiple reference links](explorations/2021-05-28-multilinks.md)
-- [Generating citations via DOI links](explorations/doi.md)
-- [Wiki links and search links](explorations/2021-05-28-multilinks.md)
 
 ### Heading blocks
 
@@ -136,13 +126,13 @@ Subtext currently supports only one level of heading. This is a deliberate desig
 
 ### List blocks
 
-List blocks start with `-`. List blocks SHOULD be presented in a manner that denotes they are lists. Visual clients MAY render list blocks with a bullet preceding. They MAY also choose to visually group contiguous list blocks together, for example, by removing the margins between them.
+List blocks start with `-`. List blocks SHOULD be presented in a manner that denotes they are items in a list. Visual clients MAY render list blocks with a bullet preceding. They MAY also choose to visually group contiguous list blocks together, for example, by removing the margins between them.
 
 Subtext currently supports only one level of list. Our sense at this time is that the benefits of deep lists do not outweigh the costs of complicating the document format by introducing hierarchy. Clients MAY consider transcluding links to formats like `.yaml`, `.json`, or `.opml` to display deep lists.
 
 ### Quote blocks
 
-Quote blocks start with `>`. Quote blocks SHOULD be presented in a manner that denotes they are quoted text. Visual clients MAY render quote blocks by indenting them, or by rendering them with a line to the left, as seen in many email clients. Non-visual clients, such as screen readers MAY read quote blocks in a different voice style.
+Quote blocks start with `>`. Quote blocks SHOULD be presented in a manner that denotes they are quoted text. Visual clients MAY render quote blocks by indenting them, or by rendering them with a line to the left, as seen in many email clients. Non-visual clients, such as screen readers MAY read quote blocks in a different voice style denoting quotation.
 
 ### Blank lines
 
@@ -180,19 +170,16 @@ Blank blocks have no presentational meaning in Subtext, but are often used in ma
 
 Clients MAY ignore blank lines for the purpose of rendering.
 
-However, parsers SHOULD NOT discard blank blocks. Instead, they should preserve them in the source representation, so that they may be written back out as blank lines, when rendering markup.
+However, parsers SHOULD NOT discard blank blocks. Instead, they SHOULD preserve them in the source representation, so that they may be written back out as blank lines when rendering markup.
 
-When parsing Subtext, blank lines are defined as any number of `\s` or `\t` characters, followed by a [Universal Newline](#universal-newlines).
+When parsing blank lines are defined as a [Universal Newline](#universal-newlines) that was preceded by either another Universal Newline, or BOF, a notional code point that represents the beginning of input.
 
-The following sequences of characters are all valid blank lines for the purpose of parsing. (Since space characters are invisible, the following examples are described using escape characters):
+Examples of blank lines (since space characters are invisible, the following examples are described using escape characters):
 
 ```
 \n
-\s\n
-\t\t\r\n
+\r\n
 ```
-
-Any `\s` or `\t` characters that may have been part of a blank line during parsing are discarded.
 
 ## Links
 
@@ -306,7 +293,7 @@ For file types it understands, the client MAY render all or part of the linked d
 - A linked `.csv` file MAY be rendered in-place as a table.
 - A linked Subtext file MAY be transcluded (linked while rendered in-place), rendered in-place in full, or excerpted and rendered in-place, depending on the use-case.
  
-> **Design note (non-normative)**: By allowing you to reference other documents, it is possible to compose hypertext documents from many smaller documents. Rather than extending the syntax of Subtext to include features like tables, videos, or deeply nested lists, our sense is that a hypertext format allows these special types to be represented in their native file containers. This keeps Subtext simple, and allows data sources like `.csv`, or `.png` to be OPTIONALLY embedded in-place, while remaining valid file types that can be opened, edited, and used in other applications.
+> *Design note (non-normative)*: By allowing you to reference other documents, it is possible to compose hypertext documents from many smaller documents. Rather than extending the syntax of Subtext to include features like tables, videos, or deeply nested lists, our sense is that a hypertext format allows these special types to be represented in their native file containers. This keeps Subtext simple, and allows data sources like `.csv`, or `.png` to be OPTIONALLY embedded in-place, while remaining valid file types that can be opened, edited, and used in other applications.
 
 ## Sigils reserved for future use
 
