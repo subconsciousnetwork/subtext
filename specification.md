@@ -14,7 +14,7 @@ This is a rough sketch of an actual spec for Subtext. It is becoming increasingl
 
 Subtext is a text-based, line-oriented hypertext format. It is designed with note-taking in mind. It has a simple, people-friendly syntax that is easy to read, and difficult to mess up.
 
-Subtext markup is made up of a sequence of lines. Lines that are prefixed with "magic" characters are treated as specially tagged blocks. Lines without leading special characters are tagged as text blocks. Empty lines are ignored. Here's a quick sample:
+Subtext markup is made up of a sequence of lines. Lines that are prefixed with "magic" characters are treated as specially tagged blocks. Lines without leading special characters are treated as text blocks. Empty lines are ignored. Here's a quick sample:
 
 ```
 # Heading
