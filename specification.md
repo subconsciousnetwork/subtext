@@ -2,7 +2,7 @@
 
 ## Speculative specification
 
-- **Version**: 2021.06.01.dev
+- **Version**: 2021.10.10.dev
 - **Status**: Draft
 - **Authors**: Gordon Brander
 
@@ -39,9 +39,10 @@ Subtext is designed to be used in a wide range of settings, from simple command-
 
 ### People goals
 
+- **Markup for notes**. Subtext is meant for jotting down your thoughts, not for presentation, or publishing.
 - **People-friendly**. We've settled on a syntax that is as close to plain text as we could manage. It has a passing resemblance to Markdown.
 - **Hand-writeable**. We want to avoid imposing too much syntax on the user who is hand-editing Subtext. It should be possible to write ordinary lines of plain text, prose, and get a working document out of it.
-- **Simple and mistake-proof**. At this time, it is not possible to write invalid Subtext documents by hand. There are no brackets to mis-type or closing tags to omit. We would like to retain this property as much as possible, even if Subtext's features grow in the future.
+- **Simple**: Subtext tries to do the simplest thing that could possibly work, even if it sometimes means sacrificing features.
 
 ### Computer goals
 
@@ -113,9 +114,39 @@ Note that the space after sigil characters is part of the sigil and is not optio
 
 ## Core block types
 
+### Text blocks
+
+Text blocks are the fundamental line type. Any line which does not match the definition of another line type defaults to being a text line.
+
+Text lines SHOULD be presented to the user in a manner suitable for general reading. This SHOULD include wrapping text, where appropriate. Text lines MAY be formatted for reading at the client's discretion. For example, clients MAY choose to display text with variable fonts, leading and font-size appropriate to the context.
+
+**For future exploration**:
+
+- [Multiple reference links](explorations/2021-05-28-multilinks.md)
+- [Generating citations via DOI links](explorations/doi.md)
+- [Wiki links and search links](explorations/2021-05-28-multilinks.md)
+
+### Heading blocks
+
+Heading blocks start with `#`. Heading blocks SHOULD be presented in a manner denotes that they are hierarchically "above", and "label" blocks below. This MAY mean typical typographic heading treatment in visual clients, such as increasing the font size as compared to text blocks, or displaying the text in bold. In non-visual clients, such as screen readers, this MAY mean announcing the block using a different voice style.
+
+Clients MAY also create navigational affordances for headings, such as deriving a Table of Contents from heading blocks, or creating jump points in the scroll bar.
+
+Subtext currently supports only one level of heading. This is a deliberate design choice, since a deep heading hierarchy is probably a sign your note needs to be refactored or unbundled into multiple notes. To construct deeply nested documents, you can link to other notes using a link block, instead. Supporting clients MAY read in these nested documents, embed them in-place, and adjust heading sizes as necessary, to denote heading level. Solving hierarchy through links encourages a hypertext method of writing, and allows pieces of a document to be used in more than one place.
+
+### List blocks
+
+List blocks start with `-`. List blocks SHOULD be presented in a manner that denotes they are lists. Visual clients MAY render list blocks with a bullet preceding. They MAY also choose to visually group contiguous list blocks together, for example, by removing the margins between them.
+
+Subtext currently supports only one level of list. Our sense at this time is that the benefits of deep lists do not outweigh the costs of complicating the document format by introducing hierarchy. Clients MAY consider transcluding links to formats like `.yaml`, `.json`, or `.opml` to display deep lists.
+
+### Quote blocks
+
+Quote blocks start with `>`. Quote blocks SHOULD be presented in a manner that denotes they are quoted text. Visual clients MAY render quote blocks by indenting them, or by rendering them with a line to the left, as seen in many email clients. Non-visual clients, such as screen readers MAY read quote blocks in a different voice style.
+
 ### Blank lines
 
-Each blank line in Subtext is parsed to a blank block. Blank blocks are for presentational purposes, and have no structural meaning.
+Each blank line in Subtext is parsed to a blank block.
 
 For example, the following Subtext document:
 
@@ -145,6 +176,12 @@ Parses to blocks (expressed as Lisp pseudocode):
  (text "for breakfast"))
 ```
 
+Blank blocks have no presentational meaning in Subtext, but are often used in markup source code for readability reasons.
+
+Clients MAY ignore blank lines for the purpose of rendering.
+
+However, parsers SHOULD NOT discard blank blocks. Instead, they should preserve them in the source representation, so that they may be written back out as blank lines, when rendering markup.
+
 When parsing Subtext, blank lines are defined as any number of `\s` or `\t` characters, followed by a [Universal Newline](#universal-newlines).
 
 The following sequences of characters are all valid blank lines for the purpose of parsing. (Since space characters are invisible, the following examples are described using escape characters):
@@ -155,19 +192,112 @@ The following sequences of characters are all valid blank lines for the purpose 
 \t\t\r\n
 ```
 
-Any `\s` or `\t` characters that may have been part of a blank line during parsing are discarded. Subtext renderers MUST render blank lines as an empty string, joined with a newline `\n` character.
+Any `\s` or `\t` characters that may have been part of a blank line during parsing are discarded.
 
-### Text blocks
+## Links
 
-Text blocks are the fundamental line type. Any line which does not match the definition of another line type defaults to being a text line.
+### Bare URLs
 
-Text lines SHOULD be presented to the user in a manner suitable for general reading. This SHOULD include wrapping text, where appropriate. Text lines MAY be formatted for reading at the client's discretion. For example, clients MAY choose to display text with variable fonts, leading and font-size appropriate to the context. 
+Subtext parsers MUST implement automatic linking for certain URLs that are not in brackets.
 
-### Link blocks
+```
+You can also just paste bare links, like https://example.com, and Subtext will try to sniff them out and automatically link them.
+```
 
-Link blocks start with `& `. They reference other files within the flow of a Subtext document. Any kind of file can be linked, including other Subtext documents.
+The grammar for URLs defined by [RFC1738 Uniform Resource Locators (URL)](https://datatracker.ietf.org/doc/html/rfc1738) is extremely general, and not practical to sniff out without false positives. To avoid ambiguities and false positives, autolinking is restricted to a few well-known protocols that can more easily be identified:
 
-The client MUST render some kind of user-interactable link to the document. The client MAY choose what form this link takes.
+- `http`
+- `https`
+
+#### Parsing bare URLs
+
+`http` and `https` bare URLs are conceptually valid URIs as defined by [Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986).
+
+Parsing grammar:
+
+```abnf
+link = WB url WB
+url = http-url / https-url
+http-url = "http" ":" "/" url-body
+https-url = "https" ":" "/" url-body
+WB = SP / NL / BOF / EOF
+SP = "\s" / "\t"
+NL = CRLF / LF / CR
+```
+
+Where,
+
+- `url` is conceptually a valid URI, as defined by [Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986), with the grammar described in that document. However implementations MAY use a simplified strategy for identifying and parsing URLs, described below.
+- `url-body` is conceptually a sequence of characters that are valid in URIs, as defined by [Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986). However implementations MAY use a simplified strategy, described below.
+- `BOF` is a conceptual code point that signifies the end of a string, or input stream.
+- `EOF` is a conceptual code point that signifies the beginning of a string, or input stream.
+
+A simplified parsing strategy MAY be used for identifying bare URLs. Implementations that use a simplified parsing strategy to identify bare URLs SHOULD use the following strategy, described here as a regular expression:
+
+```regex
+(^|\s)(https?://[^\s>]+)[\.,;]?
+```
+
+### Bracketed URLs
+
+URLs are wrapped in angle brackets, and can appear anywhere within a text, link, or quote block:
+
+```
+Links are wrapped in angle brackets, like this <https://example.com>, and can appear anywhere in text.
+
+You can also reference links with exotic protocols like <doi:10.1000/182>.
+```
+
+#### Parsing bracketed URLs
+
+Grammar:
+
+```abnf
+link = WB "<" url ">" WB
+WB = SP / NL / BOF / EOF
+SP = "\s" / "\t"
+NL = CRLF / LF / CR
+```
+
+Where:
+
+- `url` is conceptually a URL as defined by [RFC1738 Uniform Resource Locators (URL)](https://datatracker.ietf.org/doc/html/rfc1738), However implementations MAY use a simplified parsing strategy for URLs, described below.
+- `BOF` is a conceptual code point that signifies the end of a string, or input stream.
+- `EOF` is a conceptual code point that signifies the beginning of a string, or input stream.
+
+A simplified parsing strategy MAY be used for parsing URLs. Implementations that use a simplified parsing strategy to identify bare URLs SHOULD use the following strategy, described here as a regular expression:
+
+```regex
+(^|\s)<([^<>\s]+)>($|\s)
+```
+
+### Slashlinks
+
+Slashlinks are a shorthand markup meant to be used for linking to same-origin pages. To reduce ambiguity, slashlinks do not use full URL or path syntax, but instead use a restricted syntax that is easier to parse and identify.
+
+Generally, a slashlink is a `/` followed by any number of alphanumeric characters, dashes `-`, underscores `_`.
+
+Implementations are free to interpret the slashlink in whatever way works best for their goals. For example, the slashlink `/foo/bar` does not have to reference a file at path `/foo/bar`. For example, it could be used as a slug for a database lookup, or expanded into a file path, such as `~/Documents/Subconscious/foo/bar.subtext`. These are just examples.
+
+#### Parsing slashlinks
+
+```abnf
+slashlink = "/" hier-part [sub-hier-part]
+hier-part = ALPHA / DIGIT / "-" / "_"
+sub-hier-part = "/" hier-part
+```
+
+Parsing slashlinks can be achieved via the following regular expression:
+
+```regex
+(^|\s)(/[a-zA-Z0-9/\-\_]+)($|\s)
+```
+
+### Rendering links
+
+For all kinds of links, including bare URLs, bracket URLs, and slashlinks, the client MUST render some kind of user-interactable link to the referenced document. The client MAY choose what form this link takes.
+
+The client MAY choose to render the text of the link in a way that denotes interactability, such as coloring the link blue, and giving it an underline.
 
 For file types it understands, the client MAY render all or part of the linked document in-place (e.g. transclude). For example:
 
@@ -175,56 +305,28 @@ For file types it understands, the client MAY render all or part of the linked d
 - A linked video file MAY be rendered in-place, together with playback controls.
 - A linked `.csv` file MAY be rendered in-place as a table.
 - A linked Subtext file MAY be transcluded (linked while rendered in-place), rendered in-place in full, or excerpted and rendered in-place, depending on the use-case.
-
-Links are the most important feature in Subtext. By allowing you to reference other documents, you can compose hypertext documents from many smaller documents.
-
-Rather than extending the syntax of Subtext to include features like tables, videos, or deeply nested lists, our sense is that a hypertext format allows these special types to be represented in their native file containers. Clients that understand these other file types MAY embed them, or even allow you to edit them in-place. This keeps Subtext simple, and allows data sources like `.csv`, or `.png` to be OPTIONALLY embedded in-place, while remaining valid file types that can be opened, edited, and used in best-of-breed applications.
-
-**For future exploration**:
-
-- [Multiple reference links](explorations/2021-05-28-multilinks.md)
-- [Generating citations via DOI links](explorations/doi.md)
-- [Wiki links and search links](explorations/2021-05-28-multilinks.md)
-
-### Heading blocks
-
-Heading blocks start with `# `. Heading blocks SHOULD be presented in a manner denotes that they are hierarchically "above", and "label" blocks below. This MAY mean typical typographic heading treatment in visual clients, such as increasing the font size as compared to text blocks, or displaying the text in bold. In non-visual clients, such as screen readers, this MAY mean announcing the block using a different voice style.
-
-Clients MAY also create navigational affordances for headings, such as deriving a Table of Contents from heading blocks, or creating jump points in the scroll bar.
-
-Subtext currently supports only one level of heading. This is a deliberate design choice, since a deep heading hierarchy is probably a sign your note needs to be refactored or unbundled into multiple notes. To construct deeply nested documents, you can link to other notes using a link block, instead. Supporting clients MAY read in these nested documents, embed them in-place, and adjust heading sizes as necessary, to denote heading level. Solving hierarchy through links encourages a hypertext method of writing, and allows pieces of a document to be used in more than one place.
-
-### List blocks
-
-List blocks start with `- `. List blocks SHOULD be presented in a manner that denotes they are lists. Visual clients MAY render list blocks with a bullet preceding. They MAY also choose to visually group contiguous list blocks together, for example, by removing the margins between them.
-
-Subtext currently supports only one level of list. Our sense at this time is that the benefits of deep lists do not outweigh the costs of complicating the document format by introducing hierarchy. Clients MAY consider transcluding links to formats like `.yaml`, `.json`, or `.opml` to display deep lists.
-
-### Quote blocks
-
-Quote blocks start with `> `. Quote blocks SHOULD be presented in a manner that denotes they are quoted text. Visual clients MAY render quote blocks by indenting them, or by rendering them with a line to the left, as seen in many email clients. Non-visual clients, such as screen readers MAY read quote blocks in a different voice style.
+ 
+> **Design note (non-normative)**: By allowing you to reference other documents, it is possible to compose hypertext documents from many smaller documents. Rather than extending the syntax of Subtext to include features like tables, videos, or deeply nested lists, our sense is that a hypertext format allows these special types to be represented in their native file containers. This keeps Subtext simple, and allows data sources like `.csv`, or `.png` to be OPTIONALLY embedded in-place, while remaining valid file types that can be opened, edited, and used in other applications.
 
 ## Sigils reserved for future use
 
 The following sigils are reserved for possible future use:
 
-- `$ `
-- `@ `
-- `! `
-- `% `
-- `~ `
-- `| `
-- `: `
-- `* `
-- `+ `
-- `= `
-- `\ `
-- `λ `
+- `$`
+- `@`
+- `!`
+- `%`
+- `~`
+- `|`
+- `:`
+- `*`
+- `+`
+- `=`
+- `\`
+- `λ`
 - `\s\s` (two or more contiguous space characters leading a line)
 - `\t` (one or more contiguous horizontal tab characters leading a line)
 - `---`
-
-Note, again, that the sigil includes the space character.
 
 ## Line breaks
 
@@ -247,7 +349,7 @@ This strategy follows [Postel's Robustness Principle](https://en.wikipedia.org/w
 
 ## Mime Type and extension
 
-The preferred file extension for Subtext is `.st`.
+The preferred file extension for Subtext is `.subtext`.
 
 The Mime Type for Subtext is `text/subtext`. As a subtype of the top-level media type "text", "text/subtext" inherits the "charset" parameter defined in [RFC 2046](https://tools.ietf.org/html/rfc2046). However, the default value of "charset" is "UTF-8" for Subtext "text" content.
 
