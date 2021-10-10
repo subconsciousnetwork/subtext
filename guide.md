@@ -9,7 +9,7 @@ Subtext is markup for note-taking. It aims to add just the tiniest bit of struct
 
 ## Introduction
 
-Subtext is a text-based, line-oriented hypertext format. It is designed with note-taking in mind. It has a simple, people-friendly syntax that is easy to read, and difficult to mess up.
+Subtext is a text-based, line-oriented hypertext format, designed for note-taking.
 
 Subtext markup is made up of ordinary lines of text, which are interpreted as a list of blocks. Lines that are prefixed with magic "sigil" characters are treated as special blocks. Lines without sigils are treated as text blocks. Empty lines are ignored. Here's a quick sample:
 
