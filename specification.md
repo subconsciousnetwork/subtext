@@ -12,42 +12,28 @@ This is a rough sketch of an actual spec for Subtext. It is becoming increasingl
 
 ## Overview
 
-Subtext is a text-based, line-oriented hypertext format. It is designed with note-taking in mind. It has a simple, people-friendly syntax that is easy to read, and difficult to mess up.
+Subtext is a text-based, line-oriented hypertext format, designed for note-taking.
 
-Subtext markup is made up of a sequence of lines. Lines that are prefixed with "magic" characters are treated as specially tagged blocks. Lines without leading special characters are treated as text blocks. Empty lines are ignored. Here's a quick sample:
+Subtext markup is made up of ordinary lines of text, which are interpreted as a list of blocks. Lines that are prefixed with magic "sigil" characters are treated as special blocks. Lines without sigils are treated as text blocks. Empty lines are ignored. Here's a quick sample:
 
 ```
 # Heading
 
-Plain text
+Plain text.
 
 - List item
 - List item
 
 > Quoted text
 
-& example.csv
-& https://example.com
+URLs like https://example.com are automatically linked.
+
+You can also link to local pages using short /slashlinks.
 ```
 
-Link blocks (lines starting with `&`) allow you to link to other files within the flow of a Subtext document. Any kind of file can be linked, including other Subtext documents! This makes Subtext composable, and gives it hypertext properties similar to Ted Nelson's ELF format (Nelson, 1965).
+See the [guide](guide.md) to learn more about how to use Subtext.
 
 Subtext is designed to be used in a wide range of settings, from simple command-line utilities, to advanced clients. It is extremely easy to parse, and can be rendered in a single pass, or even streamed.
-
-## Markup for note-taking
-
-Subtext is designed with hypertext note-taking in mind. It represents _block-oriented documents_ as _line-oriented markup_.
-
-A typical block-oriented document is made up of a list of blocks of different types (or occasionally, a tree of blocks). Each block type may be displayed differently. For example, a quote block may render as quote-formatted text, while an image block may render an image in-place.
-
-Some of the earliest hypertext proposals were block-oriented, including Ted Nelson's ELF (Nelson, 1965). Block-oriented documents have also independently evolved within many contemporary tools-for-thought, including [Notion](https://www.notion.so/), [Roam](https://roamresearch.com/), and [Ward Cunningham's Federated Wiki](http://fed.wiki.org/view/federated-wiki).
-
-Block-oriented documents allow for a rich mix of text, images, and other formatted content, while remaining easy to understand. Block-oriented documents are also composable (and decomposable). You can break them apart into component blocks, filter down to blocks of a particular type, merge documents, pluck out blocks, link to specific blocks, etc. Working with documents programmatically is easy because the document structure is linear. Try  meaningfully merging two HTML files... tag soup!
-
-Subtext takes the magic of _block-oriented documents_ and represents it as _line-oriented markup_, with each line describing a block. Plain text is simple, human-readable, and most importantly, it will never go away. You can work with plain text using a wide range of tools, from GUI editors, to grep. Subtext takes universal plain text, and layers a bit of structure on top, in a way that still make sense to read as plain text.
-
-I'm developing Subtext as part of a tool-for-thought, called [Subconscious](https://subconscious.substack.com/). I expect Subtext could be broadly useful for other note apps, wikis, [Zettelkasten](https://en.wikipedia.org/wiki/Zettelkasten), or plain-text note-taking. Subtext is useful anywhere a bit of structure might help you (and your computer) think more meaningfully with text.
-
 
 ## Design goals
 
