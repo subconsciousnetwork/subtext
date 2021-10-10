@@ -1,3 +1,5 @@
+**2021-10-10 Note**: this document contains non-normative rough notes on line delimiters.
+
 - Feature: 2021-05-24 Line-oriented
 - RFC PR: (fill me in with link to PR)
 - Issue: (fill me in with link to issue, if any)

@@ -1,3 +1,5 @@
+**2021-10-10 Note**: this direction was not taken. Instead, block links were replaced by slashlinks for reasons explored in https://github.com/gordonbrander/subtext/pull/18.
+
 - Feature: 2021-05-28-multilinks
 - RFC PR: (fill me in with link to PR)
 - Issue: (fill me in with link to issue, if any)
