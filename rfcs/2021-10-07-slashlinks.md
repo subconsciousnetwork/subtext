@@ -35,7 +35,7 @@ Because they support multiple cases with the same syntax, parsers must different
 
 Paths may be disambiguated from labels by requiring a `/` or `./` at the beginning, and an extension at the end, and this is currently what Subtext does. It is tricky, but doable with regular expressions, or a parser.
 
-However, URLs cannot be reasonably disambiguated from labels without either getting false-positives, or resorting to hard-coding protocols (`http://`). This is because general [URL syntax](https://datatracker.ietf.org/doc/html/rfc3986), beyond HTTP, is extremely open-ended, and more or less just defined by `<protocol>:<body>`.
+However, URLs cannot be reasonably disambiguated from labels without either getting false-positives, or resorting to hard-coding protocols (`http://`). This is because [general URL syntax](https://datatracker.ietf.org/doc/html/rfc1738), beyond HTTP, is extremely open-ended, and more or less just defined by `<protocol>:<body>`.
 
 Having to hardcode protocols as part of the language specification would be unfortunate. It prevents Subtext from being able to reference new and experimental protocols, such as p2p protocols like `ipfs:` and `dat:`.
 
