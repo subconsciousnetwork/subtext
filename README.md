@@ -2,7 +2,8 @@
 
 Subtext is a text-based, block-oriented hypertext format. It is designed with note-taking in mind. It has a simple, people-friendly syntax with a passing resemblance to Markdown.
 
-**See the [Speculative Specification](specification.md)**.
+- [User guide](guide.md)
+- [Speculative Specification](specification.md)
 
 We're experimenting with Subtext as part of [Subconscious](https://subconscious.substack.com/), a new tool for thought.
 
@@ -10,23 +11,24 @@ We're experimenting with Subtext as part of [Subconscious](https://subconscious.
 
 ## A bit of Subtext
 
-Here’s an example:
+Subtext is a text-based, line-oriented hypertext format, designed for note-taking.
+
+Subtext markup is made up of ordinary lines of text, which are interpreted as a list of blocks. Lines that are prefixed with magic "sigil" characters are treated as special blocks. Lines without sigils are treated as text blocks. Empty lines are ignored. Here's a quick sample:
 
 ```
 # Heading
 
-Plain text
+Plain text.
 
 - List item
 - List item
 
 > Quoted text
 
-& example.csv
-& https://example.com
-```
+URLs like https://example.com are automatically linked.
 
-**Subtext is line-oriented**. Each line in the file is treated as a discrete block of content. The type of a line is determined by a sigil character, like `#`, `&`, `>`, at the front of the line. If a line doesn’t have a sigil character, it is treated as plain text. This makes Subtext very easy to parse, and very easy to write. It is currently impossible to write broken Subtext, which is nice!
+You can also link to local pages using short /slashlinks.
+```
 
 ## Subtext is for notes
 
@@ -56,18 +58,26 @@ Blocks are [thought legos](https://subconscious.substack.com/p/thought-legos). A
 
 In theory, this is true of any tree-based markup language, such as HTML. But try meaningfully merging two HTML files in practice... Yikes! Tag soup!
 
-A linear block-oriented format resolves the problem by radically simplifying it. With a linear data model, the range of meaningful document structures is narrowed, and this means you can make complex, yet meaningful programmatic decisions, without much context about the specific document:
+A block-oriented format resolves the problem by radically simplifying it. With a linear data model, the range of meaningful document structures is narrowed, and this means you can make complex, yet meaningful programmatic decisions, without much context about the specific document:
 
 - Excerpt a document by taking the first text block
 - Select all quotes from a collection of documents
 - Select all links, and generate a link graph for a collection of documents
 - Find all backlinks and append them to the document as links
 
-Linear block-oriented documents are like shipping containers for discrete thoughts. Because blocks are structurally uniform, they can be automatically moved around and reorganized. Software can split, join, and merge documents easily and effectively, because the document structure is simple.
+Linear block-oriented documents are like shipping containers for thoughts. Because blocks are structurally uniform, they can be automatically moved around and reorganized. Software can split, join, and merge documents easily and effectively, because the document structure is simple.
+
+Subtext takes the magic of _block-oriented documents_ and represents it as _line-oriented markup_, with each line describing a block. Plain text is simple, human-readable, and most importantly, it will never go away. You can work with plain text using a wide range of tools, from GUI editors, to grep.
 
 ## Subtext is hypertext
 
-Link blocks (`&`) are the most important feature in Subtext. They let you reference other files, and URLs. You can link to any kind of file, including other Subtext files!
+Links in Subtext can be written as longhand URLs, or shorthand slashlinks:
+
+```
+http://example.com/subtext
+
+/subtext
+```
 
 The plan is to have Subconscious display these links as [transclusions](https://en.wikipedia.org/wiki/Transclusion). Rather than linked words in text, imagine something more like a [quote tweet](https://indieweb.org/quote_tweet)… Links to images display as literal images, links to videos display as playable videos with playback controls, links to documents display some or all of the content inside of the linked document. This lets you compose hypertext documents from many smaller documents.
 
@@ -99,6 +109,7 @@ The syntax is also simple, and hard to mess up, and I’m happy about that, too.
 
 ## Project links
 
+- [Guide](guide.md)
 - [Specification](specification.md)
 - [FAQ](faq.md)
 - [Design principles](notes/design.md)

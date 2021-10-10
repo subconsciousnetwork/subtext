@@ -6,6 +6,7 @@ from collections import namedtuple
 from itertools import groupby
 from io import StringIO
 import re
+import html
 
 
 def id(x):
@@ -53,50 +54,6 @@ def joinlines(lines):
     return "\n".join(lines)
 
 
-_SCHEME_RE = re.compile(
-    "^[a-zA-Z][a-zA-Z0-9\+\-\.]*://"
-)
-
-
-def _starts_with_scheme(string):
-    return _SCHEME_RE.match(string) is not None
-
-
-def _starts_with_path(string):
-    return (
-        string.startswith("./") or
-        string.startswith("../") or
-        string.startswith("/")
-    )
-
-_PATH_RE = re.compile(
-    "^((?:\./|\.\./|/)[a-zA-Z0-9-_\s\./]+\.[a-zA-Z0-9-_]+)(?:\s+(.+))?"
-)
-
-def _parse_link_body(string):
-    trimmed = string.strip()
-    if _starts_with_scheme(trimmed):
-        # Split on first space
-        parts = trimmed.split(" ", 1)
-        multiurl = parts[0]
-        label = parts[1] if len(parts) > 1 else ""
-        links = multiurl.split("|")
-        return (tuple(links), label)
-    elif _starts_with_path(trimmed):
-        match = _PATH_RE.match(trimmed)
-        if match:
-            path = match.group(1)
-            label = match.group(2) or ""
-            return ((path,), label)
-        else:
-            # Could not parse. Treat whole body as label.
-            # This case should only be hit if file name does not have ext.
-            return ((trimmed,), "")
-    else:
-        return (tuple(), trimmed)
-
-
-LinkBlock = namedtuple("LinkBlock", ("urls", "label"))
 TextBlock = namedtuple("TextBlock", ("value",))
 HeadingBlock = namedtuple("HeadingBlock", ("value",))
 ListBlock = namedtuple("ListBlock", ("value",))
@@ -104,9 +61,10 @@ QuoteBlock = namedtuple("QuoteBlock", ("value",))
 BlankBlock = namedtuple("BlankBlock", tuple())
 
 
-def _strip_markup_line(line, sigil):
+def _strip_line_markup(line, sigil):
     """Strip sigil and whitespace from a line of markup"""
-    return line.lstrip(sigil).rstrip()
+    chars = f"{sigil} "
+    return line.lstrip(chars)
 
 
 def markup_to_blocks(lines):
@@ -114,16 +72,13 @@ def markup_to_blocks(lines):
     Parse lines in a file-like iterator, yielding blocks.
     """
     for line in lines:
-        if line.startswith("# "):
-            yield HeadingBlock(_strip_markup_line(line, "# "))
-        elif line.startswith("- "):
-            yield ListBlock(_strip_markup_line(line, "- "))
-        elif line.startswith("> "):
-            yield QuoteBlock(_strip_markup_line(line, "> "))
-        elif line.startswith("& "):
-            urls, label = _parse_link_body(_strip_markup_line(line, "& "))
-            yield LinkBlock(urls, label)
-        elif line.strip() == "":
+        if line.startswith("#"):
+            yield HeadingBlock(_strip_line_markup(line, "#"))
+        elif line.startswith("-"):
+            yield ListBlock(_strip_line_markup(line, "-"))
+        elif line.startswith(">"):
+            yield QuoteBlock(_strip_line_markup(line, ">"))
+        elif line == "":
             yield BlankBlock()
         else:
             yield TextBlock(line)
@@ -141,12 +96,6 @@ def blocks_to_markup(blocks):
             yield f"- {block.value}"
         elif block_type == QuoteBlock:
             yield f"> {block.value}"
-        elif block_type == LinkBlock:
-            if len(block.urls):
-                multiurl = "|".join(block.urls)
-                yield f"& {multiurl} {block.label}"
-            else:
-                yield f"& {block.label}"
         elif block_type == BlankBlock:
             yield ""
         else:
@@ -160,6 +109,39 @@ def blocks_to_plain(blocks):
     """
     for block in blocks:
         yield f"{block.value}"
+
+
+_SLASHLINK = re.compile(
+    "(^|\s)(/[a-zA-Z0-9/\-\_]+)"
+)
+
+_BARELINK = re.compile(
+    "(^|\s)(https?://[^\s>]+)[\.,;]?"
+)
+
+_BRACKETLINK = re.compile(
+    "<([^>\s]+)>"
+)
+
+
+def _repl_barelink(matchobj):
+    url = matchobj.group(2)
+    text = html.escape(url)
+    return f'<a href="{url}">{text}</a>'
+
+
+def _repl_bracketlink(matchobj):
+    url = matchobj.group(1)
+    text = html.escape(url)
+    return f'<a href="{url}">{text}</a>'
+
+
+def render_inline_html(line, slashlink):
+    def _repl_slashlink(matchobj):
+        return slashlink(matchobj.group(2))
+    line = _SLASHLINK_RE.sub(_repl_slashlink, line)
+    line = _BARELINK.sub(_repl_barelink, link)
+    line = _BARELINK.sub(_repl_bracketlink, link)
 
 
 BlockGroup = namedtuple("BlockGroup", ("type", "value"))
@@ -192,7 +174,7 @@ parse = compose(
 )
 
 
-render = compose(
+markup = compose(
     joinlines,
     blocks_to_markup
 )

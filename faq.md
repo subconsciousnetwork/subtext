@@ -3,6 +3,7 @@
 About Subtext:
 
 - [README](README.md)
+- [Guide](guide.md)
 - [Specification](specification.md)
 
 ## What about deep linking?
@@ -13,7 +14,7 @@ See [explorations/deep-links.md](explorations/deep-links.md) for more.
 
 ## What about bold, italic, and other inline markup?
 
-I asked myself this same question, and came away with 3 provocations to myself:
+Maybe! I asked myself this same question, and came away with 3 provocations to myself:
 
 1. [YAGNI](notes/design.md).
 2. It's markup for note taking.
@@ -36,12 +37,6 @@ When it's flat, you just concat. And trees are still there... as links! In the e
 Hashtags perhaps? On the other hand, a tag is just a link to a page that doesn’t exist yet. Backlinks get you all of the practical features of tags.
 
 See [explorations/hashtags.md](explorations/hashtags.md), [explorations/wiki-link.md](explorations/2021-05-28-multilinks.md) and [explorations/2021-05-28-multilinks.md](explorations/2021-05-28-multilinks.md) for more.
-
-## What about wikilinks?
-
-My sense is that link blocks should be able to accept multiple reference types, including just ordinary words that the client can interpret as a wiki “word link”.
-
-See [explorations/wiki-link.md](explorations/2021-05-28-multilinks.md) and [explorations/2021-05-28-multilinks.md](explorations/2021-05-28-multilinks.md) for more.
 
 ## Why line-oriented?
 
