@@ -51,11 +51,11 @@ Is there no simpler way forward?
 A quick preview:
 
 ```
-Links are wrapped in angle brackets, like this <https://example.com>, and can appear anywhere in text.
+Bare http links https://example.com will be automatically linked.
 
-You can also just paste bare links, like https://example.com, and Subtext will try to sniff them out and automatically link them.
+You can also wrap links in angle brackets <https://example.com>.
 
-Subtext might not be able to sniff out exotic protocols like <ipfs://asdfasdfasdfasdf>. You can use angle brackets for those cases.
+This is useful for exotic protocols like <ipfs://asdfasdfasdfasdf>.
 
 This is a /slashlink, it is a shortcut for linking to an /internal-page.
 ```
