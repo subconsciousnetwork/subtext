@@ -56,7 +56,9 @@ Block 1
 Block 2
 ```
 
-Usually, it's nice to put a blank line between text blocks for readability, though.
+Blank lines have no meaning in Subtext, but can be added between any blocks, for source code readability.
+
+Usually, it's nice to put a blank line between text blocks for readability reasons.
 
 ### Heading blocks
 
@@ -95,10 +97,6 @@ Quote blocks start with a `>`
 ```
 
 The space after the `>` is optional, but it's nice to include it for readability.
-
-### Blank lines
-
-Blank lines have no meaning in Subtext, but can be added for source code readability. Subtext renderers are free to ignore them.
 
 ## Links
 
