@@ -361,6 +361,7 @@ Note that while Subtext parsers accept Universal Newlines, Subtext renderers onl
 ## Appendix 2: Further Resources
 
 - [Subtext overview and motivation](README.md)
+- [Subtext user guide](guide.md)
 - [FAQ](faq.md)
 - [Future language explorations](./explorations/): this section is non-normative and exploratory. It captures some thinking about possible language additions or alternatives.
 - [Subtext parsers](./parsers/): code you can use to parse and work with Subtext.
