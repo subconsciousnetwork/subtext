@@ -172,7 +172,7 @@ Clients MAY ignore blank lines for the purpose of rendering.
 
 However, parsers SHOULD NOT discard blank blocks. Instead, they SHOULD preserve them in the source representation, so that they may be written back out as blank lines when rendering markup.
 
-When parsing blank lines are defined as a [Universal Newline](#universal-newlines) that was preceded by either another Universal Newline, or BOF, a notional code point that represents the beginning of input.
+When parsing, blank lines are defined as a [Universal Newline](#universal-newlines) that was preceded by either another Universal Newline, or START, a notional code point that represents the beginning of input.
 
 Examples of blank lines (since space characters are invisible, the following examples are described using escape characters):
 
@@ -207,7 +207,7 @@ link = WB url WB
 url = http-url / https-url
 http-url = "http" ":" "/" url-body
 https-url = "https" ":" "/" url-body
-WB = SP / NL / BOF / EOF
+WB = SP / NL / START
 SP = "\s" / "\t"
 NL = CRLF / LF / CR
 ```
@@ -216,14 +216,16 @@ Where,
 
 - `url` is conceptually a valid URI, as defined by [Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986), with the grammar described in that document. However implementations MAY use a simplified strategy for identifying and parsing URLs, described below.
 - `url-body` is conceptually a sequence of characters that are valid in URIs, as defined by [Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986). However implementations MAY use a simplified strategy, described below.
-- `BOF` is a conceptual code point that signifies the end of a string, or input stream.
-- `EOF` is a conceptual code point that signifies the beginning of a string, or input stream.
+- `START` is a conceptual code point that signifies the beginning of a line, or input stream.
+
 
 A simplified parsing strategy MAY be used for identifying bare URLs. Implementations that use a simplified parsing strategy to identify bare URLs SHOULD use the following strategy, described here as a regular expression:
 
 ```regex
 (^|\s)(https?://[^\s>]+)[\.,;]?
 ```
+
+Where the second capture group is the value of the link.
 
 ### Bracketed URLs
 
@@ -241,7 +243,7 @@ Grammar:
 
 ```abnf
 link = WB "<" url ">" WB
-WB = SP / NL / BOF / EOF
+WB = SP / NL / START
 SP = "\s" / "\t"
 NL = CRLF / LF / CR
 ```
@@ -249,14 +251,17 @@ NL = CRLF / LF / CR
 Where:
 
 - `url` is conceptually a URL as defined by [RFC1738 Uniform Resource Locators (URL)](https://datatracker.ietf.org/doc/html/rfc1738), However implementations MAY use a simplified parsing strategy for URLs, described below.
-- `BOF` is a conceptual code point that signifies the end of a string, or input stream.
-- `EOF` is a conceptual code point that signifies the beginning of a string, or input stream.
+- `START` is a conceptual code point that signifies the beginning of a line, or input stream.
 
 A simplified parsing strategy MAY be used for parsing URLs. Implementations that use a simplified parsing strategy to identify bare URLs SHOULD use the following strategy, described here as a regular expression:
 
 ```regex
 (^|\s)<([^<>\s]+)>($|\s)
 ```
+
+> *Design note*: bracket links are delimited by a word boundary (either beginning of line, or space) to avoid collision with other uses for brackets.
+
+> *Design note*: bracket links disallow spaces. This allows parsers to reject partially-formed bracket links, without having to traverse the entire line. This is useful when live-rendering markup as user types.
 
 ### Slashlinks
 
@@ -269,16 +274,26 @@ Implementations are free to interpret the slashlink in whatever way works best f
 #### Parsing slashlinks
 
 ```abnf
-slashlink = "/" hier-part [sub-hier-part]
-hier-part = ALPHA / DIGIT / "-" / "_"
-sub-hier-part = "/" hier-part
+slashlink = WB hier-part [hier-part] WB
+hier-part = "/" path-part
+path-part = ALPHA / DIGIT / "-" / "_"
+WB = SP / NL / START
 ```
 
-Parsing slashlinks can be achieved via the following regular expression:
+Where:
+
+- `START` is a conceptual code point that signifies the beginning of a line, or input stream.
+
+
+Parsing slashlinks may be achieved via the following regular expression:
 
 ```regex
 (^|\s)(/[a-zA-Z0-9/\-\_]+)($|\s)
 ```
+
+Where the second capture group is the value of the slashlink.
+
+> *Design note*: slashlinks are delimited by a word boundary (either beginning of line, or space) to avoid collision with normal prose-uses of the slash character.
 
 ### Rendering links
 
