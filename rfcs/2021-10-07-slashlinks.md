@@ -42,7 +42,7 @@ Having to hardcode protocols as part of the language specification would be unfo
 Other motivations that inspired this rethink:
 
 - Block links are unfamiliar, and not necessarily the easiest to visually scan.
-- Wikilinks are visually noisy, abliet common.
+- Wikilinks are visually noisy, albeit common.
 
 Is there no simpler way forward?
 
@@ -136,8 +136,8 @@ NL = CRLF / LF / CR
 Where:
 
 - `url` is conceptually a URL as defined by [RFC1738 Uniform Resource Locators (URL)](https://datatracker.ietf.org/doc/html/rfc1738), However implementations MAY use a simplified parsing strategy for URLs, described below.
-- `BOF` is a conceptual code point that signifies the end of a string, or input stream.
-- `EOF` is a conceptual code point that signifies the beginning of a string, or input stream.
+- `EOF` is a conceptual code point that signifies the end of a string, or input stream.
+- `BOF` is a conceptual code point that signifies the beginning of a string, or input stream.
 
 A simplified parsing strategy MAY be used for parsing URLs. Implementations that use a simplified parsing strategy to identify bare URLs SHOULD use the following strategy, described here as a regular expression:
 
@@ -249,7 +249,7 @@ This leads to a different style of note-taking focused on simple prose, with `/s
 
 The success of `#hashtags` and `@mentions` lies in there simplicity. They are simple to write, simple to understand, and simple to implement anywhere. `/slashlinks` share this simplicity. They're also visually simple, and easy to scan with your eyeball parsers.
 
-There's also an obvious visual connection between `/slashlinks` and full URLs... they're similar, and they in similar ways. If the path is too complex to discribe with a slashlink, the syntax suggests you can just use a full URL instead, and this is true!
+There's also an obvious visual connection between `/slashlinks` and full URLs... they're similar, and they work in similar ways. If the path is too complex to describe with a slashlink, the syntax suggests you can just use a full URL instead, and this is true!
 
 # Drawbacks
 
