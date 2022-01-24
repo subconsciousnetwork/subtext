@@ -274,7 +274,7 @@ Implementations are free to interpret the slashlink in whatever way works best f
 #### Parsing slashlinks
 
 ```abnf
-slashlink = WB hier-part [hier-part] WB
+slashlink = WB hier-part [hier-part]
 hier-part = "/" path-part
 path-part = ALPHA / DIGIT / "-" / "_"
 WB = SP / NL / START
@@ -288,12 +288,12 @@ Where:
 Parsing slashlinks may be achieved via the following regular expression:
 
 ```regex
-(^|\s)(/[a-zA-Z0-9/\-\_]+)($|\s)
+(^|\s)(/[a-zA-Z0-9\-_/]+)
 ```
 
 Where the second capture group is the value of the slashlink.
 
-> *Design note*: slashlinks are delimited by a word boundary (either beginning of line, or space) to avoid collision with normal prose-uses of the slash character.
+> *Design note*: slashlinks are delimited by a word boundary on the leading side (either beginning of line, or space) to avoid collision with normal prose uses of the slash character.
 
 ### Rendering links
 
