@@ -36,7 +36,7 @@ You can also link to local pages using short /slashlinks.
 
 HTML comes in web pages. The analogy for an HTML document is quite literally _a page_. The image that springs to mind is of an 8.5x11” sheet, carefully typeset, with multiple fonts, headings, complex formatting, perhaps laid out across many columns. HTML is a publication format, designed to produce complete, indivisible artifacts, called _pages_.
 
-The right mental analogy for Subtext is not the page. It is the the [index card](https://subconscious.substack.com/p/thought-legos).
+The right mental analogy for Subtext is not the page. It is the [index card](https://subconscious.substack.com/p/thought-legos).
 
 Subtext deliberately avoids the kind of complex presentation features offered by publishing formats like HTML, PDF, and LaTex. It has no opinions about fonts, colors, sizes.
 
