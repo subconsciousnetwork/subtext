@@ -1,0 +1,24 @@
+[package]
+name = "subtext"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tendril = "0.4.2"
+anyhow = "1.0.52"
+log = "0.4.14"
+
+# rayon = { version = "1.5.1", optional = true }
+# [dev-dependencies]
+# tokio = { version = "^1", features = ["full"] }
+
+# [features]
+# default = ["render-html"]
+# render-html = ["async-trait", "url", "futures"]
+
+# parallel = ["rayon"]
+# [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+# tokio = { version = "^1", features = ["full"] }
+
+# [target.'cfg(target_arch = "wasm32")'.dependencies]
+# wasm-bindgen = "0.2"
