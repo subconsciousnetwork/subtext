@@ -10,5 +10,10 @@ pub mod util;
 
 pub use parse::parse;
 
+#[cfg(feature = "stream")]
+mod stream;
+#[cfg(feature = "stream")]
+pub use stream::*;
+
 #[cfg(test)]
 mod test;

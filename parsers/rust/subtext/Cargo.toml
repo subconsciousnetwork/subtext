@@ -1,24 +1,22 @@
 [package]
 name = "subtext"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
+[features]
+stream = ["tokio", "async-stream", "futures", "async-compat", "async-utf8-decoder"]
+
 [dependencies]
-tendril = "0.4.2"
-anyhow = "1.0.52"
-log = "0.4.14"
+tendril = "~0.4"
+anyhow = "^1"
+log = "~0.4"
 
-# rayon = { version = "1.5.1", optional = true }
-# [dev-dependencies]
-# tokio = { version = "^1", features = ["full"] }
+# For stream parsing only....
+tokio = { version = "^1", features = ["io-util", "macros", "test-util"], optional = true }
+async-stream = { version = "~0.3", optional = true }
+futures = { version = "~0.3", optional = true }
+async-compat = { version = "~0.2", optional = true }
+async-utf8-decoder = { version = "~0.3", optional = true }
 
-# [features]
-# default = ["render-html"]
-# render-html = ["async-trait", "url", "futures"]
-
-# parallel = ["rayon"]
-# [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-# tokio = { version = "^1", features = ["full"] }
-
-# [target.'cfg(target_arch = "wasm32")'.dependencies]
-# wasm-bindgen = "0.2"
+[dev-dependencies]
+wasm-bindgen-test = "~0.3"
