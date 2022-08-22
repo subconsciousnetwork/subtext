@@ -1,7 +1,6 @@
-[package]
-name = "subtext-rs"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-tendril = "0.4.2"
+[workspace]
+members = [
+  "subtext",
+]
+# See: https://github.com/rust-lang/rust/issues/90148#issuecomment-949194352
+resolver = "2"

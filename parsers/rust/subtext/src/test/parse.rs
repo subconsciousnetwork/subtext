@@ -1,4 +1,8 @@
-use crate::{block, parse, primitive};
+use crate::{
+    block::{self, Block},
+    parse,
+    primitive::{self, Entity},
+};
 
 #[test]
 fn empty_space() {
@@ -6,12 +10,12 @@ fn empty_space() {
 
           "#;
 
-    let blocks = parse(input.as_bytes());
+    let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
     assert_eq!(blocks.len(), 1);
 
     match blocks.first() {
-        Some(block::Entity::Seperator(primitive)) => {
+        Some(block::Block::Seperator(primitive)) => {
             assert_eq!(primitive.to_string(), input);
         }
         _ => panic!("Incorrect block type!"),
@@ -22,14 +26,12 @@ fn empty_space() {
 fn basic_slash_links() {
     let input = r#"/foo/bar"#;
 
-    let blocks = parse(input.as_bytes());
+    let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
     assert_eq!(blocks.len(), 1);
 
-    println!("Block: {:#?}", blocks.first());
-
     match blocks.first() {
-        Some(block::Entity::Link(primitive::Entity::SlashLink(value))) => {
+        Some(block::Block::Link(primitive::Entity::SlashLink(value))) => {
             assert_eq!(value.to_string(), "/foo/bar");
         }
         _ => panic!("Incorrect block or primitive type!"),
@@ -40,12 +42,12 @@ fn basic_slash_links() {
 fn basic_headers() {
     let input = r#"# Hello, world!"#;
 
-    let blocks = parse(input.as_bytes());
+    let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
     assert_eq!(blocks.len(), 1);
 
     match blocks.first() {
-        Some(block::Entity::Header(primitives)) => {
+        Some(block::Block::Header(primitives)) => {
             assert_eq!(primitives.len(), 3);
             assert_eq!(primitives.first().unwrap().to_string(), "#");
             assert_eq!(primitives.get(1).unwrap().to_string(), " ");
@@ -59,14 +61,12 @@ fn basic_headers() {
 fn basic_paragraphs() {
     let input = r#"This is a paragraph"#;
 
-    let blocks = parse(input.as_bytes());
-
-    println!("Blocks: {:#?}", blocks);
+    let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
     assert_eq!(blocks.len(), 1);
 
     match blocks.first() {
-        Some(block::Entity::Paragraph(parts)) => {
+        Some(block::Block::Paragraph(parts)) => {
             assert_eq!(parts.len(), 1);
             assert_eq!(parts.first().unwrap().to_string(), "This is a paragraph");
         }
@@ -78,14 +78,12 @@ fn basic_paragraphs() {
 fn basic_hyper_links() {
     let input = r#"http://example.com/foo?bar=baz#zot"#;
 
-    let blocks = parse(input.as_bytes());
-
-    println!("Blocks: {:#?}", blocks);
+    let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
     assert_eq!(blocks.len(), 1);
 
     match blocks.first() {
-        Some(block::Entity::Link(primitive)) => {
+        Some(block::Block::Link(primitive)) => {
             assert_eq!(primitive.to_string(), input);
         }
         _ => panic!("Incorrect block type!"),
@@ -98,14 +96,12 @@ fn basic_lists() {
  - Two
  - Three"#;
 
-    let blocks = parse(input.as_bytes());
-
-    println!("Blocks: {:#?}", blocks);
+    let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
     assert_eq!(blocks.len(), 1);
 
     match blocks.first() {
-        Some(block::Entity::List(items)) => {
+        Some(block::Block::List(items)) => {
             assert_eq!(items.len(), 3);
 
             match items.as_slice() {
@@ -133,20 +129,22 @@ fn basic_lists() {
 mod headers {
 
     mod with_hyperlinks {
-        use crate::{block, parse, primitive};
+        use crate::{
+            block::{self, Block},
+            parse,
+            primitive::{self, Entity},
+        };
 
         #[test]
         fn at_the_beginning() {
             let input = r#"# http://example.com/foo?bar=baz#zot for example"#;
 
-            let blocks = parse(input.as_bytes());
-
-            println!("Blocks: {:#?}", blocks);
+            let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
             assert_eq!(blocks.len(), 1);
 
             match blocks.first() {
-                Some(block::Entity::Header(primitives)) => {
+                Some(Block::Header(primitives)) => {
                     assert_eq!(primitives.len(), 4);
 
                     match primitives.get(2) {
@@ -170,14 +168,12 @@ mod headers {
         fn in_the_middle() {
             let input = r#"# See http://example.com/foo?bar=baz#zot for example"#;
 
-            let blocks = parse(input.as_bytes());
-
-            println!("Blocks: {:#?}", blocks);
+            let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
             assert_eq!(blocks.len(), 1);
 
             match blocks.first() {
-                Some(block::Entity::Header(primitives)) => {
+                Some(block::Block::Header(primitives)) => {
                     assert_eq!(primitives.len(), 5);
 
                     match primitives.get(2) {
@@ -208,14 +204,12 @@ mod headers {
         fn at_the_end() {
             let input = r#"# Example link: http://example.com/foo?bar=baz#zot"#;
 
-            let blocks = parse(input.as_bytes());
-
-            println!("Blocks: {:#?}", blocks);
+            let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
             assert_eq!(blocks.len(), 1);
 
             match blocks.first() {
-                Some(block::Entity::Header(primitives)) => {
+                Some(block::Block::Header(primitives)) => {
                     assert_eq!(primitives.len(), 4);
 
                     match primitives.get(2) {
@@ -238,25 +232,65 @@ mod headers {
     }
 }
 
-mod lists {}
+mod lists {
+    use crate::{block::Block, parse, primitive::Entity};
+
+    #[test]
+    fn one_item_is_a_sublink() {
+        let input = r#"- One
+ - /two
+ - Three"#;
+
+        let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
+
+        assert_eq!(blocks.len(), 1);
+
+        match blocks.first() {
+            Some(Block::List(items)) => {
+                assert_eq!(items.len(), 3);
+
+                match items.as_slice() {
+                    [one, two, three] => {
+                        assert_eq!(one.len(), 3);
+                        assert_eq!(two.len(), 3);
+                        assert_eq!(three.len(), 3);
+
+                        match (one.get(2), two.get(2), three.get(2)) {
+                            (Some(one), Some(two), Some(three)) => {
+                                assert_eq!(one.to_string(), "One");
+                                assert_eq!(two.to_string(), "/two");
+                                assert_eq!(three.to_string(), "Three");
+                            }
+                            _ => panic!("Unexpected list items!"),
+                        }
+                    }
+                    _ => panic!("Wrong list items!"),
+                }
+            }
+            _ => panic!("Incorrect block type!"),
+        }
+    }
+}
 
 mod paragraphs {
     mod with_slash_links {
 
-        use crate::{block, parse, primitive};
+        use crate::{
+            block::{self, Block},
+            parse,
+            primitive::{self, Entity},
+        };
 
         #[test]
         fn at_the_beginning() {
             let input = r#"/foo/bar for example"#;
 
-            let blocks = parse(input.as_bytes());
-
-            println!("Blocks: {:#?}", blocks);
+            let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
             assert_eq!(blocks.len(), 1);
 
             match blocks.first() {
-                Some(block::Entity::Paragraph(primitives)) => {
+                Some(block::Block::Paragraph(primitives)) => {
                     assert_eq!(primitives.len(), 2);
 
                     match primitives.first() {
@@ -280,14 +314,12 @@ mod paragraphs {
         fn in_the_middle() {
             let input = r#"See /foo/bar for example"#;
 
-            let blocks = parse(input.as_bytes());
-
-            println!("Blocks: {:#?}", blocks);
+            let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
             assert_eq!(blocks.len(), 1);
 
             match blocks.first() {
-                Some(block::Entity::Paragraph(primitives)) => {
+                Some(block::Block::Paragraph(primitives)) => {
                     assert_eq!(primitives.len(), 3);
 
                     match primitives.first() {
@@ -318,14 +350,12 @@ mod paragraphs {
         fn at_the_end() {
             let input = r#"Example link: /foo/bar"#;
 
-            let blocks = parse(input.as_bytes());
-
-            println!("Blocks: {:#?}", blocks);
+            let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
             assert_eq!(blocks.len(), 1);
 
             match blocks.first() {
-                Some(block::Entity::Paragraph(primitives)) => {
+                Some(block::Block::Paragraph(primitives)) => {
                     assert_eq!(primitives.len(), 2);
 
                     match primitives.first() {
@@ -348,20 +378,22 @@ mod paragraphs {
     }
 
     mod with_hyper_links {
-        use crate::{block, parse, primitive};
+        use crate::{
+            block::{self, Block},
+            parse,
+            primitive::{self, Entity},
+        };
 
         #[test]
         fn at_the_beginning() {
             let input = r#"http://example.com/foo?bar=baz#zot for example"#;
 
-            let blocks = parse(input.as_bytes());
-
-            println!("Blocks: {:#?}", blocks);
+            let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
             assert_eq!(blocks.len(), 1);
 
             match blocks.first() {
-                Some(block::Entity::Paragraph(primitives)) => {
+                Some(block::Block::Paragraph(primitives)) => {
                     assert_eq!(primitives.len(), 2);
 
                     match primitives.first() {
@@ -385,14 +417,12 @@ mod paragraphs {
         fn in_the_middle() {
             let input = r#"See http://example.com/foo?bar=baz#zot for example"#;
 
-            let blocks = parse(input.as_bytes());
-
-            println!("Blocks: {:#?}", blocks);
+            let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
             assert_eq!(blocks.len(), 1);
 
             match blocks.first() {
-                Some(block::Entity::Paragraph(primitives)) => {
+                Some(block::Block::Paragraph(primitives)) => {
                     assert_eq!(primitives.len(), 3);
 
                     match primitives.first() {
@@ -423,14 +453,12 @@ mod paragraphs {
         fn at_the_end() {
             let input = r#"Example link: http://example.com/foo?bar=baz#zot"#;
 
-            let blocks = parse(input.as_bytes());
-
-            println!("Blocks: {:#?}", blocks);
+            let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
             assert_eq!(blocks.len(), 1);
 
             match blocks.first() {
-                Some(block::Entity::Paragraph(primitives)) => {
+                Some(block::Block::Paragraph(primitives)) => {
                     assert_eq!(primitives.len(), 2);
 
                     match primitives.first() {
@@ -451,4 +479,21 @@ mod paragraphs {
             }
         }
     }
+}
+
+#[test]
+fn it_parses_complex_multiline_subtext() {
+    let subtext = r#"# Html
+
+It is a /markup language.
+
+http://www.google.com
+
+ - One
+ - /two
+ - I bet [[you thought]] I would write three"#;
+
+    let blocks: Vec<Block<Entity>> = parse(subtext.as_bytes()).unwrap().collect();
+
+    assert_eq!(blocks.len(), 7);
 }

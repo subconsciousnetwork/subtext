@@ -1,0 +1,22 @@
+[package]
+name = "subtext"
+version = "0.2.0"
+edition = "2021"
+
+[features]
+stream = ["tokio", "async-stream", "futures", "async-compat", "async-utf8-decoder"]
+
+[dependencies]
+tendril = "~0.4"
+anyhow = "^1"
+log = "~0.4"
+
+# For stream parsing only....
+tokio = { version = "^1", features = ["io-util", "macros", "test-util"], optional = true }
+async-stream = { version = "~0.3", optional = true }
+futures = { version = "~0.3", optional = true }
+async-compat = { version = "~0.2", optional = true }
+async-utf8-decoder = { version = "~0.3", optional = true }
+
+[dev-dependencies]
+wasm-bindgen-test = "~0.3"

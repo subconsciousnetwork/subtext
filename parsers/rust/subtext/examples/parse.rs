@@ -3,7 +3,9 @@ use std::fs;
 use std::path::Path;
 use std::process;
 
-use subtext_rs::parse;
+use subtext::block::Block;
+use subtext::parse;
+use subtext::primitive::Entity;
 use tendril::fmt::Slice;
 
 pub fn main() {
@@ -21,7 +23,9 @@ pub fn main() {
     println!("Attempting to parse {:?}", full_file_path);
     match fs::read(full_file_path) {
         Ok(buffer) => {
-            let result = parse(buffer.as_bytes());
+            // let result = parse(buffer.as_bytes());
+            let result: Vec<Block<Entity>> = parse(buffer.as_bytes()).unwrap().collect();
+
             println!("Parsed blocks: {:#?}", result);
         }
         Err(error) => {
