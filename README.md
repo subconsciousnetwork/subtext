@@ -112,5 +112,4 @@ The syntax is also simple, and hard to mess up, and I’m happy about that, too.
 - [Guide](guide.md)
 - [Specification](specification.md)
 - [FAQ](faq.md)
-- [Design principles](notes/design.md)
-- [Notes](./notes/)
+- [Design principles](archive/design.md)
