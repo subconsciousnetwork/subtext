@@ -1,5 +1,6 @@
+use crate::str::SharedString;
 use crate::{primitive, primitive::Entity, util::cut};
-use tendril::{StrTendril, SubtendrilError};
+use tendril::SubtendrilError;
 
 #[derive(Debug, Clone)]
 pub enum Block<E>
@@ -62,14 +63,14 @@ where
 }
 
 pub fn parse_empty_space<E: From<Entity> + AsRef<Entity>>(
-    input: StrTendril,
+    input: SharedString,
 ) -> Result<(Block<E>, usize), SubtendrilError> {
     let (primitive, steps) = primitive::parse_empty_space(input)?;
     Ok((Block::Seperator(primitive.into()), steps))
 }
 
 pub fn parse_paragraph<E: From<Entity> + AsRef<Entity>>(
-    input: StrTendril,
+    input: SharedString,
 ) -> Result<(Block<E>, usize), SubtendrilError> {
     let (primitives, steps) = primitive::parse_text::<E>(input)?;
 
@@ -88,7 +89,7 @@ pub fn parse_paragraph<E: From<Entity> + AsRef<Entity>>(
 }
 
 pub fn parse_link<E: From<Entity> + AsRef<Entity>>(
-    input: StrTendril,
+    input: SharedString,
 ) -> Result<(Block<E>, usize), SubtendrilError> {
     let (primitive, steps) = match input.chars().nth(0) {
         Some('/') => primitive::parse_slash_link(input)?,
@@ -99,7 +100,7 @@ pub fn parse_link<E: From<Entity> + AsRef<Entity>>(
 }
 
 fn parse_with_sigil<E: From<Entity> + AsRef<Entity>>(
-    input: StrTendril,
+    input: SharedString,
     sigil: char,
 ) -> Result<(Vec<E>, usize), SubtendrilError> {
     let mut iter = input.char_indices().peekable();
@@ -143,21 +144,21 @@ fn parse_with_sigil<E: From<Entity> + AsRef<Entity>>(
 }
 
 pub fn parse_header<E: From<Entity> + AsRef<Entity>>(
-    input: StrTendril,
+    input: SharedString,
 ) -> Result<(Block<E>, usize), SubtendrilError> {
     let (primitives, end) = parse_with_sigil(input, '#')?;
     Ok((Block::Header(primitives), end))
 }
 
 pub fn parse_quote<E: From<Entity> + AsRef<Entity>>(
-    input: StrTendril,
+    input: SharedString,
 ) -> Result<(Block<E>, usize), SubtendrilError> {
     let (primitives, end) = parse_with_sigil(input, '>')?;
     Ok((Block::Quote(primitives), end))
 }
 
 pub fn parse_list<E: From<Entity> + AsRef<Entity>>(
-    input: StrTendril,
+    input: SharedString,
 ) -> Result<(Block<E>, usize), SubtendrilError> {
     let mut iter = input.char_indices().peekable();
     let mut items = Vec::<Vec<E>>::new();

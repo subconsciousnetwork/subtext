@@ -6,7 +6,8 @@ use crate::{
     util::cut,
 };
 use anyhow::{anyhow, Result};
-use tendril::StrTendril;
+// use tendril::SharedString;
+use crate::str::SharedString;
 
 /// Parse a raw buffer as a chunk of subtext. The iterator yields the parsed
 /// subtext one block at a time.
@@ -15,7 +16,7 @@ where
     E: From<Entity> + AsRef<Entity>,
     B: From<Block<E>>,
 {
-    let input = StrTendril::try_from_byte_slice(input)
+    let input = SharedString::try_from_byte_slice(input)
         .map_err(|_| anyhow!("Could not interpret bytes as UTF-8"))?;
     Ok(SubtextIterator::new(input))
 }
@@ -25,7 +26,7 @@ where
     E: From<Entity> + AsRef<Entity>,
     B: From<Block<E>>,
 {
-    input: StrTendril,
+    input: SharedString,
     output_type: PhantomData<(B, E)>,
 }
 
@@ -34,7 +35,7 @@ where
     E: From<Entity> + AsRef<Entity>,
     B: From<Block<E>>,
 {
-    pub fn new(input: StrTendril) -> Self {
+    pub fn new(input: SharedString) -> Self {
         SubtextIterator {
             input,
             output_type: PhantomData {},

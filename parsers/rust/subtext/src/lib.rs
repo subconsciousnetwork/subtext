@@ -6,6 +6,7 @@ mod parse;
 mod predicate;
 pub mod primitive;
 mod sequence;
+pub mod str;
 pub mod util;
 
 pub use parse::parse;

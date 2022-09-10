@@ -1,4 +1,5 @@
-use tendril::{StrTendril, SubtendrilError};
+use crate::str::SharedString;
+use tendril::SubtendrilError;
 
 use crate::{
     predicate::{
@@ -9,12 +10,12 @@ use crate::{
 
 #[derive(Debug, Clone)]
 pub enum Entity {
-    Sigil(StrTendril),
-    TextSpan(StrTendril),
-    EmptySpace(StrTendril),
-    SlashLink(StrTendril),
-    HyperLink(StrTendril),
-    WikiLink(StrTendril),
+    Sigil(SharedString),
+    TextSpan(SharedString),
+    EmptySpace(SharedString),
+    SlashLink(SharedString),
+    HyperLink(SharedString),
+    WikiLink(SharedString),
 }
 
 impl AsRef<Entity> for Entity {
@@ -47,7 +48,7 @@ impl Entity {
     }
 }
 
-pub fn parse_empty_space(input: StrTendril) -> Result<(Entity, usize), SubtendrilError> {
+pub fn parse_empty_space(input: SharedString) -> Result<(Entity, usize), SubtendrilError> {
     let mut iter = input.char_indices().peekable();
     let mut end = 0usize;
 
@@ -68,9 +69,9 @@ pub fn parse_empty_space(input: StrTendril) -> Result<(Entity, usize), Subtendri
 }
 
 pub fn parse_until<P>(
-    input: StrTendril,
+    input: SharedString,
     mut predicate: P,
-) -> Result<(StrTendril, usize), SubtendrilError>
+) -> Result<(SharedString, usize), SubtendrilError>
 where
     P: FnMut(&char) -> Option<usize>,
 {
@@ -92,28 +93,28 @@ where
     return Ok((input, end + 1));
 }
 
-pub fn parse_slash_link(input: StrTendril) -> Result<(Entity, usize), SubtendrilError> {
+pub fn parse_slash_link(input: SharedString) -> Result<(Entity, usize), SubtendrilError> {
     match parse_until(input, white_space_predicate()) {
         Ok((value, steps)) => Ok((Entity::SlashLink(value), steps)),
         Err(error) => Err(error),
     }
 }
 
-pub fn parse_hyper_link(input: StrTendril) -> Result<(Entity, usize), SubtendrilError> {
+pub fn parse_hyper_link(input: SharedString) -> Result<(Entity, usize), SubtendrilError> {
     match parse_until(input, white_space_predicate()) {
         Ok((value, steps)) => Ok((Entity::HyperLink(value), steps)),
         Err(error) => Err(error),
     }
 }
 
-pub fn parse_wiki_link(input: StrTendril) -> Result<(Entity, usize), SubtendrilError> {
+pub fn parse_wiki_link(input: SharedString) -> Result<(Entity, usize), SubtendrilError> {
     match parse_until(input, wiki_link_delimiter_predicate()) {
         Ok((value, steps)) => Ok((Entity::WikiLink(value), steps)),
         Err(error) => Err(error),
     }
 }
 
-pub fn parse_text<E>(input: StrTendril) -> Result<(Vec<E>, usize), SubtendrilError>
+pub fn parse_text<E>(input: SharedString) -> Result<(Vec<E>, usize), SubtendrilError>
 where
     E: From<Entity> + AsRef<Entity>,
 {

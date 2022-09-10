@@ -2,9 +2,10 @@ use anyhow::Result;
 use tendril::{SubtendrilError, Tendril};
 
 /// Cut a tendril at the given index. returning the rhs of the cut
-pub fn cut<T>(tendril: &Tendril<T>, at: usize) -> Result<Tendril<T>, SubtendrilError>
+pub fn cut<T, A>(tendril: &Tendril<T, A>, at: usize) -> Result<Tendril<T, A>, SubtendrilError>
 where
     T: tendril::Format,
+    A: tendril::Atomicity,
 {
     tendril.try_subtendril(at as u32, tendril.len32() - at as u32)
 }
