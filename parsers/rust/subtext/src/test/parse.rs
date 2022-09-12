@@ -15,7 +15,7 @@ fn empty_space() {
     assert_eq!(blocks.len(), 1);
 
     match blocks.first() {
-        Some(block::Block::Seperator(primitive)) => {
+        Some(block::Block::Blank(primitive)) => {
             assert_eq!(primitive.to_string(), input);
         }
         _ => panic!("Incorrect block type!"),
@@ -98,31 +98,21 @@ fn basic_lists() {
 
     let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
-    assert_eq!(blocks.len(), 1);
+    println!("{:#?}", blocks);
+    assert_eq!(blocks.len(), 3);
 
-    match blocks.first() {
-        Some(block::Block::List(items)) => {
-            assert_eq!(items.len(), 3);
-
-            match items.as_slice() {
-                [one, two, three] => {
-                    assert_eq!(one.len(), 3);
-                    assert_eq!(two.len(), 3);
-                    assert_eq!(three.len(), 3);
-
-                    match (one.get(2), two.get(2), three.get(2)) {
-                        (Some(one), Some(two), Some(three)) => {
-                            assert_eq!(one.to_string(), "One");
-                            assert_eq!(two.to_string(), "Two");
-                            assert_eq!(three.to_string(), "Three");
-                        }
-                        _ => panic!("Unexpected list items!"),
-                    }
+    match blocks.as_slice() {
+        [Block::List(one), Block::List(two), Block::List(three)] => {
+            match (one.get(2), two.get(2), three.get(2)) {
+                (Some(one), Some(two), Some(three)) => {
+                    assert_eq!(one.to_string(), "One");
+                    assert_eq!(two.to_string(), "Two");
+                    assert_eq!(three.to_string(), "Three");
                 }
-                _ => panic!("Wrong list items!"),
+                _ => panic!("Unexpected list items!"),
             }
         }
-        _ => panic!("Incorrect block type!"),
+        _ => panic!("Incorrect set of blocks!"),
     }
 }
 
@@ -243,31 +233,20 @@ mod lists {
 
         let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
-        assert_eq!(blocks.len(), 1);
+        assert_eq!(blocks.len(), 3);
 
-        match blocks.first() {
-            Some(Block::List(items)) => {
-                assert_eq!(items.len(), 3);
-
-                match items.as_slice() {
-                    [one, two, three] => {
-                        assert_eq!(one.len(), 3);
-                        assert_eq!(two.len(), 3);
-                        assert_eq!(three.len(), 3);
-
-                        match (one.get(2), two.get(2), three.get(2)) {
-                            (Some(one), Some(two), Some(three)) => {
-                                assert_eq!(one.to_string(), "One");
-                                assert_eq!(two.to_string(), "/two");
-                                assert_eq!(three.to_string(), "Three");
-                            }
-                            _ => panic!("Unexpected list items!"),
-                        }
+        match blocks.as_slice() {
+            [Block::List(one), Block::List(two), Block::List(three)] => {
+                match (one.get(2), two.get(2), three.get(2)) {
+                    (Some(one), Some(two), Some(three)) => {
+                        assert_eq!(one.to_string(), "One");
+                        assert_eq!(two.to_string(), "/two");
+                        assert_eq!(three.to_string(), "Three");
                     }
-                    _ => panic!("Wrong list items!"),
+                    _ => panic!("Unexpected list items!"),
                 }
             }
-            _ => panic!("Incorrect block type!"),
+            _ => panic!("Incorrect set of blocks!"),
         }
     }
 }
@@ -486,6 +465,7 @@ fn it_parses_complex_multiline_subtext() {
     let subtext = r#"# Html
 
 It is a /markup language.
+Based around the concept of [[Blocks]].
 
 http://www.google.com
 

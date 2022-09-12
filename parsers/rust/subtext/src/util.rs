@@ -43,3 +43,20 @@ pub fn to_slug(input: &str) -> Result<String> {
 
     Ok(slug)
 }
+
+#[cfg(test)]
+pub fn assert_round_trip(input: &str) {
+    let blocks: Vec<crate::block::Block<crate::primitive::Entity>> =
+        crate::parse(input.as_bytes()).unwrap().collect();
+    let actual_bytes: Vec<u8> = blocks.iter().fold(Vec::new(), |mut bytes, block| {
+        bytes.append(&mut block.to_bytes());
+        bytes
+    });
+
+    let expected_bytes = Vec::from(input.as_bytes());
+
+    let actual_string = String::from_utf8(actual_bytes).unwrap();
+    let expected_string = String::from_utf8(expected_bytes).unwrap();
+
+    assert_eq!(expected_string, actual_string);
+}

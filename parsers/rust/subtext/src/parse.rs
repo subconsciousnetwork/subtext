@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use crate::{
-    block::{parse_empty_space, parse_header, parse_list, parse_paragraph, parse_quote, Block},
+    block::{parse_blank, parse_header, parse_list, parse_paragraph, parse_quote, Block},
     primitive::Entity,
     util::cut,
 };
@@ -53,7 +53,7 @@ where
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(token) = self.input.chars().next() {
             let parse_block = match token {
-                '\r' | '\n' | ' ' | '\t' => parse_empty_space,
+                '\r' | '\n' | ' ' | '\t' => parse_blank,
                 '#' => parse_header,
                 '-' => parse_list,
                 '>' => parse_quote,

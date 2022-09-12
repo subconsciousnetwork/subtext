@@ -10,31 +10,26 @@ where
     Header(Vec<E>),
     Paragraph(Vec<E>),
     Quote(Vec<E>),
-    List(Vec<Vec<E>>),
+    List(Vec<E>),
     Link(E),
-    Seperator(E),
+    Blank(E),
 }
 
 impl<E> Block<E>
 where
     E: From<Entity> + AsRef<Entity>,
 {
+    pub fn to_text_content(&self) -> String {
+        todo!()
+    }
+
     pub fn to_bytes(&self) -> Vec<u8> {
         match self {
-            Block::Header(entities) | Block::Paragraph(entities) | Block::Quote(entities) => {
-                Block::entities_to_bytes(entities)
-            }
-            Block::List(list) => list
-                .iter()
-                .map(Block::entities_to_bytes)
-                .reduce(|mut bytes, mut next| {
-                    bytes.extend_from_slice("\n".as_bytes());
-                    bytes.append(&mut next);
-                    bytes
-                })
-                .or_else(|| Some(Vec::new()))
-                .unwrap(),
-            Block::Link(entity) | Block::Seperator(entity) => Vec::from(entity.as_ref().as_bytes()),
+            Block::Header(entities)
+            | Block::Paragraph(entities)
+            | Block::Quote(entities)
+            | Block::List(entities) => Block::entities_to_bytes(entities),
+            Block::Link(entity) | Block::Blank(entity) => Vec::from(entity.as_ref().as_bytes()),
         }
     }
 
@@ -62,11 +57,11 @@ where
     }
 }
 
-pub fn parse_empty_space<E: From<Entity> + AsRef<Entity>>(
+pub fn parse_blank<E: From<Entity> + AsRef<Entity>>(
     input: SharedString,
 ) -> Result<(Block<E>, usize), SubtendrilError> {
     let (primitive, steps) = primitive::parse_empty_space(input)?;
-    Ok((Block::Seperator(primitive.into()), steps))
+    Ok((Block::Blank(primitive.into()), steps))
 }
 
 pub fn parse_paragraph<E: From<Entity> + AsRef<Entity>>(
@@ -160,40 +155,6 @@ pub fn parse_quote<E: From<Entity> + AsRef<Entity>>(
 pub fn parse_list<E: From<Entity> + AsRef<Entity>>(
     input: SharedString,
 ) -> Result<(Block<E>, usize), SubtendrilError> {
-    let mut iter = input.char_indices().peekable();
-    let mut items = Vec::<Vec<E>>::new();
-
-    let mut end = 0usize;
-    let mut line_breaks = 0usize;
-    let mut empty_space_length = 0usize;
-
-    while let Some(&(index, token)) = iter.peek() {
-        let mut advance = 0usize;
-        match token {
-            '-' => {
-                let (item, steps) = parse_with_sigil(cut(&input, index)?, '-')?;
-                items.push(item);
-                advance = steps;
-
-                line_breaks = 0;
-                empty_space_length = 0;
-            }
-            '\r' | ' ' | '\t' => {
-                empty_space_length += 1;
-            }
-            '\n' => {
-                empty_space_length += 1;
-                line_breaks += 1;
-                if line_breaks > 1 {
-                    break;
-                }
-            }
-            _ => break,
-        };
-
-        end = index + advance;
-        iter.nth(advance);
-    }
-
-    Ok((Block::List(items), end - empty_space_length))
+    let (primitives, end) = parse_with_sigil(input, '-')?;
+    Ok((Block::List(primitives), end))
 }
