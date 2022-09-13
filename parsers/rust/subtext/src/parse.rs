@@ -1,9 +1,8 @@
 use std::marker::PhantomData;
 
+use crate::str::SharedString;
 use crate::{block::Block, primitive::Entity, util::cut};
 use anyhow::{anyhow, Result};
-// use tendril::SharedString;
-use crate::str::SharedString;
 
 /// Parse a raw buffer as a chunk of subtext. The iterator yields the parsed
 /// subtext one block at a time.

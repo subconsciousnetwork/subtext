@@ -1,5 +1,3 @@
-// use tendril::SharedString;
-
 use crate::{
     primitive::{parse_slash_link, parse_text, parse_wiki_link, Entity},
     str::SharedString,
