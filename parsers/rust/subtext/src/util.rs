@@ -1,7 +1,7 @@
 use anyhow::Result;
 use tendril::{SubtendrilError, Tendril};
 
-/// Cut a tendril at the given index. returning the rhs of the cut
+/// Cut a tendril at the given index, returning the RHS of the cut
 pub fn cut<T, A>(tendril: &Tendril<T, A>, at: usize) -> Result<Tendril<T, A>, SubtendrilError>
 where
     T: tendril::Format,
@@ -10,6 +10,8 @@ where
     tendril.try_subtendril(at as u32, tendril.len32() - at as u32)
 }
 
+/// Slug-ify an arbitrary input string to make it compatible with
+/// Subconscious' notion of slashlink slugs
 pub fn to_slug(input: &str) -> Result<String> {
     let mut slug = input
         .trim()
@@ -48,15 +50,12 @@ pub fn to_slug(input: &str) -> Result<String> {
 pub fn assert_round_trip(input: &str) {
     let blocks: Vec<crate::block::Block<crate::primitive::Entity>> =
         crate::parse(input.as_bytes()).unwrap().collect();
-    let actual_bytes: Vec<u8> = blocks.iter().fold(Vec::new(), |mut bytes, block| {
-        bytes.append(&mut block.to_bytes());
-        bytes
-    });
 
-    let expected_bytes = Vec::from(input.as_bytes());
+    let actual_string = blocks
+        .iter()
+        .map(|block| block.to_string())
+        .collect::<Vec<String>>()
+        .join("\n");
 
-    let actual_string = String::from_utf8(actual_bytes).unwrap();
-    let expected_string = String::from_utf8(expected_bytes).unwrap();
-
-    assert_eq!(expected_string, actual_string);
+    assert_eq!(input, actual_string);
 }

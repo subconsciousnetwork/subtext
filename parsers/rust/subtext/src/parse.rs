@@ -1,10 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::{
-    block::{parse_blank, parse_header, parse_list, parse_paragraph, parse_quote, Block},
-    primitive::Entity,
-    util::cut,
-};
+use crate::{block::Block, primitive::Entity, util::cut};
 use anyhow::{anyhow, Result};
 // use tendril::SharedString;
 use crate::str::SharedString;
@@ -51,16 +47,8 @@ where
     type Item = B;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if let Some(token) = self.input.chars().next() {
-            let parse_block = match token {
-                '\r' | '\n' | ' ' | '\t' => parse_blank,
-                '#' => parse_header,
-                '-' => parse_list,
-                '>' => parse_quote,
-                _ => parse_paragraph,
-            };
-
-            match parse_block(self.input.clone()) {
+        if self.input.len() > 0 {
+            match crate::block::parse(self.input.clone()) {
                 Ok((block, steps)) => {
                     let steps = usize::min(steps, self.input.len());
                     self.input = match cut(&self.input, steps) {

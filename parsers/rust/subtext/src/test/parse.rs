@@ -12,11 +12,14 @@ fn empty_space() {
 
     let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
-    assert_eq!(blocks.len(), 1);
+    assert_eq!(blocks.len(), 3);
 
-    match blocks.first() {
-        Some(block::Block::Blank(primitive)) => {
-            assert_eq!(primitive.to_string(), input);
+    match &blocks.as_slice()[..] {
+        [block::Block::Blank(first), block::Block::Blank(second), block::Block::Blank(third)] => {
+            // assert_eq!(primitive.to_string(), input);
+            assert_eq!(first.to_string(), "  ");
+            assert_eq!(second.to_string(), "");
+            assert_eq!(third.to_string(), "          ");
         }
         _ => panic!("Incorrect block type!"),
     }
@@ -31,8 +34,9 @@ fn basic_slash_links() {
     assert_eq!(blocks.len(), 1);
 
     match blocks.first() {
-        Some(block::Block::Link(primitive::Entity::SlashLink(value))) => {
-            assert_eq!(value.to_string(), "/foo/bar");
+        Some(block::Block::Paragraph(parts)) => {
+            assert_eq!(parts.len(), 1);
+            assert_eq!(parts.first().unwrap().to_string(), input);
         }
         _ => panic!("Incorrect block or primitive type!"),
     }
@@ -83,8 +87,9 @@ fn basic_hyper_links() {
     assert_eq!(blocks.len(), 1);
 
     match blocks.first() {
-        Some(block::Block::Link(primitive)) => {
-            assert_eq!(primitive.to_string(), input);
+        Some(block::Block::Paragraph(parts)) => {
+            assert_eq!(parts.len(), 1);
+            assert_eq!(parts.first().unwrap().to_string(), input);
         }
         _ => panic!("Incorrect block type!"),
     }
@@ -93,12 +98,11 @@ fn basic_hyper_links() {
 #[test]
 fn basic_lists() {
     let input = r#"- One
- - Two
- - Three"#;
+- Two
+- Three"#;
 
     let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
-    println!("{:#?}", blocks);
     assert_eq!(blocks.len(), 3);
 
     match blocks.as_slice() {
@@ -228,8 +232,8 @@ mod lists {
     #[test]
     fn one_item_is_a_sublink() {
         let input = r#"- One
- - /two
- - Three"#;
+- /two
+- Three"#;
 
         let blocks: Vec<Block<Entity>> = parse(input.as_bytes()).unwrap().collect();
 
@@ -475,5 +479,5 @@ http://www.google.com
 
     let blocks: Vec<Block<Entity>> = parse(subtext.as_bytes()).unwrap().collect();
 
-    assert_eq!(blocks.len(), 7);
+    assert_eq!(blocks.len(), 10);
 }

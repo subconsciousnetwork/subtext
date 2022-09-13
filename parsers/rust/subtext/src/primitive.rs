@@ -114,6 +114,32 @@ pub fn parse_wiki_link(input: SharedString) -> Result<(Entity, usize), Subtendri
     }
 }
 
+/// Clips the next one or two entities with awareness of leading whitespace
+fn clip<E>(
+    input: &SharedString,
+    leading_whitespace_index: u32,
+    mut start: u32,
+    end: u32,
+) -> Result<Vec<E>, SubtendrilError>
+where
+    E: From<Entity> + AsRef<Entity>,
+{
+    let mut entities = Vec::new();
+
+    if leading_whitespace_index > 0 {
+        entities.push(
+            Entity::EmptySpace(input.try_subtendril(start, leading_whitespace_index)?).into(),
+        );
+        start = leading_whitespace_index;
+    }
+
+    if end > start {
+        entities.push(Entity::TextSpan(input.try_subtendril(start, end - start)?).into());
+    }
+
+    Ok(entities)
+}
+
 pub fn parse_text<E>(input: SharedString) -> Result<(Vec<E>, usize), SubtendrilError>
 where
     E: From<Entity> + AsRef<Entity>,
@@ -124,16 +150,31 @@ where
     let mut entities = Vec::<E>::new();
 
     let mut is_link = link_predicate();
+    let mut leading_whitespace_index = 0usize;
+    let mut leading_word_index = input.len();
 
     'parse: while let Some(&(index, token)) = iter.peek() {
+        match token {
+            ' ' | '\t' if leading_word_index > index => {
+                leading_whitespace_index = index + 1;
+            }
+            _ => leading_word_index = index,
+        };
+
+        // Check if we met the link predicate criteria; if we did, make an
+        // entity out of the text span we have seen so far and then parse
+        // the link
         if let Some((match_length, parse_as)) = is_link(&token) {
             end = index - (match_length - 1);
 
             if end > start {
-                let text_span_entity = Entity::TextSpan(
-                    input.try_subtendril(start as u32, end as u32 - start as u32)?,
-                );
-                entities.push(text_span_entity.into());
+                entities.extend(clip(
+                    &input,
+                    leading_whitespace_index as u32,
+                    start as u32,
+                    end as u32,
+                )?);
+                leading_whitespace_index = 0;
             }
 
             let link_input = cut(&input, end)?;
@@ -149,7 +190,7 @@ where
             entities.push(link_entity.into());
 
             match iter.nth(start - index) {
-                Some((_, '\r')) | Some((_, '\n')) => {
+                Some((_, '\n')) => {
                     break 'parse;
                 }
                 _ => {
@@ -159,7 +200,7 @@ where
         }
 
         match token {
-            '\r' | '\n' => {
+            '\n' => {
                 end = index;
                 break 'parse;
             }
@@ -176,9 +217,12 @@ where
     }
 
     if end > start {
-        let value = input.try_subtendril(start as u32, end as u32 - start as u32)?;
-        end = end;
-        entities.push(Entity::TextSpan(value).into());
+        entities.extend(clip(
+            &input,
+            leading_whitespace_index as u32,
+            start as u32,
+            end as u32,
+        )?);
     }
 
     Ok((entities, end))
