@@ -18,11 +18,11 @@ impl<E> Block<E>
 where
     E: From<Entity> + AsRef<Entity>,
 {
-    /// Get the text content of a block. For paragraphs, this is the content
+    /// Get the content entities for a block. For paragraphs, this is content
     /// that appears after leading whitespace; for headings, lists and block
     /// quotes, this is the content that appears after a sigil and subsequent
     /// leading whitespace; for blanks, this is empty.
-    pub fn to_text_content(&self) -> String {
+    pub fn to_content_entities(&self) -> Vec<&E> {
         match self {
             Block::Header(entities) | Block::List(entities) | Block::Quote(entities) => entities
                 .iter()
@@ -30,7 +30,6 @@ where
                     Entity::Sigil(_) | Entity::EmptySpace(_) => true,
                     _ => false,
                 })
-                .map(|entity| entity.as_ref().to_string())
                 .collect(),
             Block::Paragraph(entities) => entities
                 .iter()
@@ -38,10 +37,18 @@ where
                     Entity::EmptySpace(_) => true,
                     _ => false,
                 })
-                .map(|entity| entity.as_ref().to_string())
                 .collect(),
-            Block::Blank(_) => String::new(),
+            Block::Blank(_) => Vec::new(),
         }
+    }
+
+    /// Get the text content of a block, which is the concatenated string
+    /// representation of all its content entities.
+    pub fn to_text_content(&self) -> String {
+        self.to_content_entities()
+            .iter()
+            .map(|entity| entity.as_ref().to_string())
+            .collect()
     }
 
     pub fn to_bytes(&self) -> Vec<u8> {

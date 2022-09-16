@@ -18,6 +18,9 @@ pub enum Entity {
     WikiLink(SharedString),
 }
 
+// TODO: Investigate the validity of this
+unsafe impl Sync for Entity {}
+
 impl AsRef<Entity> for Entity {
     fn as_ref(&self) -> &Entity {
         self

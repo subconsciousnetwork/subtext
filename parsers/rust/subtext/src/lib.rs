@@ -6,8 +6,10 @@ mod parse;
 mod predicate;
 pub mod primitive;
 mod sequence;
+mod slashlink;
 pub mod str;
 pub mod util;
+pub use slashlink::*;
 
 pub use parse::parse;
 
