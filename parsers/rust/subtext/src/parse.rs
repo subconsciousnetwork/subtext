@@ -1,12 +1,8 @@
 use std::marker::PhantomData;
 
-use crate::{
-    block::{parse_empty_space, parse_header, parse_list, parse_paragraph, parse_quote, Block},
-    primitive::Entity,
-    util::cut,
-};
+use crate::str::SharedString;
+use crate::{block::Block, primitive::Entity, util::cut};
 use anyhow::{anyhow, Result};
-use tendril::StrTendril;
 
 /// Parse a raw buffer as a chunk of subtext. The iterator yields the parsed
 /// subtext one block at a time.
@@ -15,7 +11,7 @@ where
     E: From<Entity> + AsRef<Entity>,
     B: From<Block<E>>,
 {
-    let input = StrTendril::try_from_byte_slice(input)
+    let input = SharedString::try_from_byte_slice(input)
         .map_err(|_| anyhow!("Could not interpret bytes as UTF-8"))?;
     Ok(SubtextIterator::new(input))
 }
@@ -25,7 +21,7 @@ where
     E: From<Entity> + AsRef<Entity>,
     B: From<Block<E>>,
 {
-    input: StrTendril,
+    input: SharedString,
     output_type: PhantomData<(B, E)>,
 }
 
@@ -34,7 +30,7 @@ where
     E: From<Entity> + AsRef<Entity>,
     B: From<Block<E>>,
 {
-    pub fn new(input: StrTendril) -> Self {
+    pub fn new(input: SharedString) -> Self {
         SubtextIterator {
             input,
             output_type: PhantomData {},
@@ -50,16 +46,8 @@ where
     type Item = B;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if let Some(token) = self.input.chars().next() {
-            let parse_block = match token {
-                '\r' | '\n' | ' ' | '\t' => parse_empty_space,
-                '#' => parse_header,
-                '-' => parse_list,
-                '>' => parse_quote,
-                _ => parse_paragraph,
-            };
-
-            match parse_block(self.input.clone()) {
+        if self.input.len() > 0 {
+            match crate::block::parse(self.input.clone()) {
                 Ok((block, steps)) => {
                     let steps = usize::min(steps, self.input.len());
                     self.input = match cut(&self.input, steps) {

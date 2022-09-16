@@ -1,10 +1,11 @@
-use tendril::StrTendril;
-
-use crate::primitive::{parse_slash_link, parse_text, parse_wiki_link, Entity};
+use crate::{
+    primitive::{parse_slash_link, parse_text, parse_wiki_link, Entity},
+    str::SharedString,
+};
 
 #[test]
 fn it_parses_a_slash_link_blap() {
-    let input = StrTendril::try_from_byte_slice(b"/foo").unwrap();
+    let input = SharedString::try_from_byte_slice(b"/foo").unwrap();
     let (entity, steps) = parse_slash_link(input).unwrap();
 
     assert_eq!(steps, 4);
@@ -13,7 +14,7 @@ fn it_parses_a_slash_link_blap() {
 
 #[test]
 fn it_parses_a_wiki_link() {
-    let input = StrTendril::try_from_byte_slice(b"[[foo bar baz]]").unwrap();
+    let input = SharedString::try_from_byte_slice(b"[[foo bar baz]]").unwrap();
     let (entity, steps) = parse_wiki_link(input).unwrap();
 
     assert_eq!(steps, 15);
@@ -22,7 +23,7 @@ fn it_parses_a_wiki_link() {
 
 #[test]
 fn it_parses_a_text_span() {
-    let input = StrTendril::try_from_byte_slice(b"foo bar baz").unwrap();
+    let input = SharedString::try_from_byte_slice(b"foo bar baz").unwrap();
     let (entities, steps) = parse_text::<Entity>(input).unwrap();
 
     assert_eq!(steps, 11);
@@ -32,7 +33,7 @@ fn it_parses_a_text_span() {
 
 #[test]
 fn it_parses_a_text_span_delimited_by_a_newline() {
-    let input = StrTendril::try_from_byte_slice(b"foo bar baz\n").unwrap();
+    let input = SharedString::try_from_byte_slice(b"foo bar baz\n").unwrap();
     let (entities, steps) = parse_text::<Entity>(input).unwrap();
 
     assert_eq!(steps, 11);
@@ -42,7 +43,7 @@ fn it_parses_a_text_span_delimited_by_a_newline() {
 
 #[test]
 fn it_parses_a_slash_link_in_a_text_span() {
-    let input = StrTendril::try_from_byte_slice(b"foo /bar baz").unwrap();
+    let input = SharedString::try_from_byte_slice(b"foo /bar baz").unwrap();
     let (entities, steps) = parse_text::<Entity>(input).unwrap();
 
     assert_eq!(steps, 12);
@@ -54,7 +55,7 @@ fn it_parses_a_slash_link_in_a_text_span() {
 
 #[test]
 fn it_parses_a_wiki_link_in_a_text_span() {
-    let input = StrTendril::try_from_byte_slice(b"foo [[bar]] baz").unwrap();
+    let input = SharedString::try_from_byte_slice(b"foo [[bar]] baz").unwrap();
     let (entities, steps) = parse_text::<Entity>(input).unwrap();
 
     assert_eq!(steps, 15);
@@ -66,7 +67,7 @@ fn it_parses_a_wiki_link_in_a_text_span() {
 
 #[test]
 fn it_parses_a_slash_link_following_a_text_span() {
-    let input = StrTendril::try_from_byte_slice(b"foo bar /baz").unwrap();
+    let input = SharedString::try_from_byte_slice(b"foo bar /baz").unwrap();
     let (entities, steps) = parse_text::<Entity>(input).unwrap();
 
     assert_eq!(steps, 12);

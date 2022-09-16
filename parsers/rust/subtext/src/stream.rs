@@ -26,50 +26,30 @@ where
 {
     try_stream! {
       let mut decoder = Utf8Decoder::new(input.compat());
-      let mut content_buffer = String::new();
-      let mut empty_space_buffer = String::new();
+      let mut buffer = String::new();
 
       while let Some(result) = decoder.next().await {
           match result {
               Ok(chunk) => {
                   for character in chunk.chars() {
-                      match character {
-                          '\r' | '\n' => {
-                              if content_buffer.len() > 0 {
-                                  yield parse_one(content_buffer.as_ref()).await?;
-                                  content_buffer.clear();
-                              }
-
-                              empty_space_buffer.push(character);
-                          }
-                          ' ' | '\t' => {
-                              if empty_space_buffer.len() > 0 {
-                                  empty_space_buffer.push(character)
-                              } else {
-                                  content_buffer.push(character)
-                              }
-                          }
-                          _ => {
-                              if empty_space_buffer.len() > 0 {
-                                  yield parse_one(empty_space_buffer.as_ref()).await?;
-                                  empty_space_buffer.clear();
-                              }
-
-                              content_buffer.push(character);
-                          }
-                      }
+                    match character {
+                        '\n' => {
+                            buffer.push(character);
+                            yield parse_one(buffer.as_ref()).await?;
+                            buffer.clear();
+                        },
+                        _ => {
+                            buffer.push(character);
+                        }
+                    }
                   }
               }
               Err(_) => {}
           }
       }
 
-      if content_buffer.len() > 0 {
-        yield parse_one(content_buffer.as_ref()).await?;
-      }
-
-      if empty_space_buffer.len() > 0 {
-        yield parse_one(empty_space_buffer.as_ref()).await?;
+      if buffer.len() > 0 {
+        yield parse_one(buffer.as_ref()).await?;
       }
     }
 }
@@ -91,13 +71,22 @@ mod tests {
         let block_stream = stream::<Block<Entity>, _, _>(rx.into_async_read().compat()).await;
 
         tx.send(Ok(b"# the title".to_vec())).await.unwrap();
-        tx.send(Ok(b"\n".to_vec())).await.unwrap();
+        tx.send(Ok(b"\n\n".to_vec())).await.unwrap();
         tx.send(Ok(b"The first part... /foo-".to_vec()))
             .await
             .unwrap();
         tx.send(Ok(b"bar-baz ... the second part".to_vec()))
             .await
             .unwrap();
+        tx.send(Ok(r#"
+
+The third and
+        
+- Final part where
+- fun stuff
+- happens
+ 
+Fin"#.as_bytes().to_vec())).await.unwrap();
 
         tx.close().await.unwrap();
 
@@ -111,14 +100,14 @@ mod tests {
                 assert_eq!(entities.get(1).unwrap().to_string(), " ");
                 assert_eq!(entities.get(2).unwrap().to_string(), "the title");
             }
-            _ => panic!("Incorrect block or primitive type!"),
+            _ => panic!("Incorrect block or primitive type: {:#?}", block),
         }
 
         let block = block_stream.next().await;
 
         match block {
-            Some(Ok(Block::Seperator(_))) => {}
-            _ => panic!("Incorrect block or primitive type!"),
+            Some(Ok(Block::Blank(_))) => {}
+            _ => panic!("Incorrect block or primitive type: {:#?}", block),
         }
 
         let block = block_stream.next().await;
@@ -129,7 +118,57 @@ mod tests {
                 assert_eq!(entities.get(1).unwrap().to_string(), "/foo-bar-baz");
                 assert_eq!(entities.get(2).unwrap().to_string(), " ... the second part");
             }
-            _ => panic!("Incorrect block or primitive type!"),
+            _ => panic!("Incorrect block or primitive type: {:#?}", block),
+        }
+
+        let block = block_stream.next().await;
+
+        match block {
+            Some(Ok(Block::Blank(space))) => {
+                assert_eq!(space.to_string(), "");
+            }
+            _ => panic!("Incorrect block or primitive type: {:#?}", block),
+        }
+
+        let block = block_stream.next().await;
+
+        match block {
+            Some(Ok(Block::Paragraph(entities))) => {
+                assert_eq!(entities.get(0).unwrap().to_string(), "The third and");
+            }
+            _ => panic!("Incorrect block or primitive type: {:#?}", block),
+        }
+
+        let block = block_stream.next().await;
+
+        match block {
+            Some(Ok(Block::Blank(_))) => (),
+            _ => panic!("Incorrect block or primitive type: {:#?}", block),
+        }
+
+        for _ in 0..3 {
+            let block = block_stream.next().await;
+
+            match block {
+                Some(Ok(Block::List(_))) => (),
+                _ => panic!("Incorrect block or primitive type: {:#?}", block),
+            }
+        }
+
+        let block = block_stream.next().await;
+
+        match block {
+            Some(Ok(Block::Blank(_))) => (),
+            _ => panic!("Incorrect block or primitive type: {:#?}", block),
+        }
+
+        let block = block_stream.next().await;
+
+        match block {
+            Some(Ok(Block::Paragraph(entities))) => {
+                assert_eq!(entities.get(0).unwrap().to_string(), "Fin");
+            }
+            _ => panic!("Incorrect block or primitive type: {:#?}", block),
         }
     }
 }

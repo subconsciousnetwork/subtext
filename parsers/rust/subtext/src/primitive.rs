@@ -1,4 +1,5 @@
-use tendril::{StrTendril, SubtendrilError};
+use crate::str::SharedString;
+use tendril::SubtendrilError;
 
 use crate::{
     predicate::{
@@ -9,13 +10,16 @@ use crate::{
 
 #[derive(Debug, Clone)]
 pub enum Entity {
-    Sigil(StrTendril),
-    TextSpan(StrTendril),
-    EmptySpace(StrTendril),
-    SlashLink(StrTendril),
-    HyperLink(StrTendril),
-    WikiLink(StrTendril),
+    Sigil(SharedString),
+    TextSpan(SharedString),
+    EmptySpace(SharedString),
+    SlashLink(SharedString),
+    HyperLink(SharedString),
+    WikiLink(SharedString),
 }
+
+// TODO: Investigate the validity of this
+unsafe impl Sync for Entity {}
 
 impl AsRef<Entity> for Entity {
     fn as_ref(&self) -> &Entity {
@@ -47,7 +51,7 @@ impl Entity {
     }
 }
 
-pub fn parse_empty_space(input: StrTendril) -> Result<(Entity, usize), SubtendrilError> {
+pub fn parse_empty_space(input: SharedString) -> Result<(Entity, usize), SubtendrilError> {
     let mut iter = input.char_indices().peekable();
     let mut end = 0usize;
 
@@ -68,9 +72,9 @@ pub fn parse_empty_space(input: StrTendril) -> Result<(Entity, usize), Subtendri
 }
 
 pub fn parse_until<P>(
-    input: StrTendril,
+    input: SharedString,
     mut predicate: P,
-) -> Result<(StrTendril, usize), SubtendrilError>
+) -> Result<(SharedString, usize), SubtendrilError>
 where
     P: FnMut(&char) -> Option<usize>,
 {
@@ -92,28 +96,54 @@ where
     return Ok((input, end + 1));
 }
 
-pub fn parse_slash_link(input: StrTendril) -> Result<(Entity, usize), SubtendrilError> {
+pub fn parse_slash_link(input: SharedString) -> Result<(Entity, usize), SubtendrilError> {
     match parse_until(input, white_space_predicate()) {
         Ok((value, steps)) => Ok((Entity::SlashLink(value), steps)),
         Err(error) => Err(error),
     }
 }
 
-pub fn parse_hyper_link(input: StrTendril) -> Result<(Entity, usize), SubtendrilError> {
+pub fn parse_hyper_link(input: SharedString) -> Result<(Entity, usize), SubtendrilError> {
     match parse_until(input, white_space_predicate()) {
         Ok((value, steps)) => Ok((Entity::HyperLink(value), steps)),
         Err(error) => Err(error),
     }
 }
 
-pub fn parse_wiki_link(input: StrTendril) -> Result<(Entity, usize), SubtendrilError> {
+pub fn parse_wiki_link(input: SharedString) -> Result<(Entity, usize), SubtendrilError> {
     match parse_until(input, wiki_link_delimiter_predicate()) {
         Ok((value, steps)) => Ok((Entity::WikiLink(value), steps)),
         Err(error) => Err(error),
     }
 }
 
-pub fn parse_text<E>(input: StrTendril) -> Result<(Vec<E>, usize), SubtendrilError>
+/// Clips the next one or two entities with awareness of leading whitespace
+fn clip<E>(
+    input: &SharedString,
+    leading_whitespace_index: u32,
+    mut start: u32,
+    end: u32,
+) -> Result<Vec<E>, SubtendrilError>
+where
+    E: From<Entity> + AsRef<Entity>,
+{
+    let mut entities = Vec::new();
+
+    if leading_whitespace_index > 0 {
+        entities.push(
+            Entity::EmptySpace(input.try_subtendril(start, leading_whitespace_index)?).into(),
+        );
+        start = leading_whitespace_index;
+    }
+
+    if end > start {
+        entities.push(Entity::TextSpan(input.try_subtendril(start, end - start)?).into());
+    }
+
+    Ok(entities)
+}
+
+pub fn parse_text<E>(input: SharedString) -> Result<(Vec<E>, usize), SubtendrilError>
 where
     E: From<Entity> + AsRef<Entity>,
 {
@@ -123,16 +153,31 @@ where
     let mut entities = Vec::<E>::new();
 
     let mut is_link = link_predicate();
+    let mut leading_whitespace_index = 0usize;
+    let mut leading_word_index = input.len();
 
     'parse: while let Some(&(index, token)) = iter.peek() {
+        match token {
+            ' ' | '\t' if leading_word_index > index => {
+                leading_whitespace_index = index + 1;
+            }
+            _ => leading_word_index = index,
+        };
+
+        // Check if we met the link predicate criteria; if we did, make an
+        // entity out of the text span we have seen so far and then parse
+        // the link
         if let Some((match_length, parse_as)) = is_link(&token) {
             end = index - (match_length - 1);
 
             if end > start {
-                let text_span_entity = Entity::TextSpan(
-                    input.try_subtendril(start as u32, end as u32 - start as u32)?,
-                );
-                entities.push(text_span_entity.into());
+                entities.extend(clip(
+                    &input,
+                    leading_whitespace_index as u32,
+                    start as u32,
+                    end as u32,
+                )?);
+                leading_whitespace_index = 0;
             }
 
             let link_input = cut(&input, end)?;
@@ -148,7 +193,7 @@ where
             entities.push(link_entity.into());
 
             match iter.nth(start - index) {
-                Some((_, '\r')) | Some((_, '\n')) => {
+                Some((_, '\n')) => {
                     break 'parse;
                 }
                 _ => {
@@ -158,7 +203,7 @@ where
         }
 
         match token {
-            '\r' | '\n' => {
+            '\n' => {
                 end = index;
                 break 'parse;
             }
@@ -175,9 +220,12 @@ where
     }
 
     if end > start {
-        let value = input.try_subtendril(start as u32, end as u32 - start as u32)?;
-        end = end;
-        entities.push(Entity::TextSpan(value).into());
+        entities.extend(clip(
+            &input,
+            leading_whitespace_index as u32,
+            start as u32,
+            end as u32,
+        )?);
     }
 
     Ok((entities, end))

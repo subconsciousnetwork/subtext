@@ -1,16 +1,4 @@
-use crate::{block::Block, parse, primitive::Entity};
-
-fn assert_round_trip(input: &str) {
-    let block: Block<Entity> = parse(input.as_bytes()).unwrap().nth(0).unwrap();
-
-    let actual_bytes = block.to_bytes();
-    let expected_bytes = Vec::from(input.as_bytes());
-
-    let actual_string = String::from_utf8(actual_bytes).unwrap();
-    let expected_string = String::from_utf8(expected_bytes).unwrap();
-
-    assert_eq!(expected_string, actual_string);
-}
+use crate::util::assert_round_trip;
 
 #[test]
 fn it_converts_a_list_block_to_bytes() {
