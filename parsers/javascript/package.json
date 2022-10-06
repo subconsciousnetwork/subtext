@@ -1,0 +1,12 @@
+{
+  "name": "subtext-parser",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A subtext parser written in JavaScript with streaming capability",
+  "main": "index.js",
+  "scripts": {
+    "example": "node examples/example.js",
+    "test": "node --test"
+  },
+  "author": ""
+}
