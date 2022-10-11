@@ -90,7 +90,7 @@ const parseText = (text) => {
 };
 
 
-export const toString = (object) => { console.log(object)
+export const toString = (object) => {
   if (typeof object.content === "string") {
     return object.content;
   }

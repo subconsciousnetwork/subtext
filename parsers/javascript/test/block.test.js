@@ -4,7 +4,7 @@ import { parseAtOnce } from "../index.js";
 import { blocksToString } from '../utils.js';
 
 const assertRoundTrip = (input) => {
-  const blocks = parseAtOnce(input); console.log(blocks)
+  const blocks = parseAtOnce(input);
   const stringFromBlocks = blocksToString(blocks);
   assert.strictEqual(input, stringFromBlocks);
 }
