@@ -27,6 +27,8 @@ const isWhiteSpace = (string) => {
 const parseText = (text) => {
   const spans = [];
   const iterator = new CharIterator(text);
+  let char;
+  let previousChar;
   let currentSpanType;
   let currentSpanText = "";
 
@@ -39,10 +41,10 @@ const parseText = (text) => {
       });
       break;
     }
-    const char = step.value;
-    const lastChar = iterator.peekBack();
+    previousChar = char;
+    char = step.value;
 
-    if (typeof lastChar !== "string" || isWhiteSpace(lastChar)) {
+    if (typeof previousChar !== "string" || isWhiteSpace(previousChar)) {
       if (
         char === "h"
         && (

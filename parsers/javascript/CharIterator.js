@@ -22,8 +22,4 @@ export default class CharIterator {
   peek(numberOfChars) {
     return this.#chars.slice(this.#index + 1, this.#index + 1 + numberOfChars);
   }
-
-  peekBack() {
-    return this.#chars[this.#index - 1];
-  }
 }
