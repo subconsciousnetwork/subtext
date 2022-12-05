@@ -1,7 +1,7 @@
 use crate::{
     block::{self, Block},
     parse,
-    primitive::{self, Entity},
+    primitive::Entity,
 };
 
 #[test]
@@ -16,7 +16,6 @@ fn empty_space() {
 
     match &blocks.as_slice()[..] {
         [block::Block::Blank(first), block::Block::Blank(second), block::Block::Blank(third)] => {
-            // assert_eq!(primitive.to_string(), input);
             assert_eq!(first.to_string(), "  ");
             assert_eq!(second.to_string(), "");
             assert_eq!(third.to_string(), "          ");

@@ -8,7 +8,7 @@ use crate::{
     util::cut,
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Entity {
     Sigil(SharedString),
     TextSpan(SharedString),
@@ -195,6 +195,10 @@ where
             match iter.nth(start - index) {
                 Some((_, '\n')) => {
                     break 'parse;
+                }
+                Some((_, any)) => {
+                    is_link(&any);
+                    continue 'parse;
                 }
                 _ => {
                     continue 'parse;

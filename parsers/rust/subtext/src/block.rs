@@ -2,7 +2,7 @@ use crate::str::SharedString;
 use crate::{primitive, primitive::Entity, util::cut};
 use tendril::SubtendrilError;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Block<E>
 where
     E: From<Entity> + AsRef<Entity>,

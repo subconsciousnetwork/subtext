@@ -44,3 +44,20 @@ fn it_yields_an_empty_string_for_blanks() {
 
     assert_eq!(text_content, "");
 }
+
+#[test]
+fn it_parses_sequential_slashlinks_as_separate_links() {
+    let input = "/foo /bar /baz";
+    let blocks: Vec<Block<Entity>> = parse(input.as_ref()).unwrap().collect();
+
+    assert_eq!(
+        blocks,
+        vec![Block::Paragraph(vec![
+            Entity::SlashLink("/foo".into()),
+            Entity::TextSpan(" ".into()),
+            Entity::SlashLink("/bar".into()),
+            Entity::TextSpan(" ".into()),
+            Entity::SlashLink("/baz".into())
+        ])]
+    )
+}
