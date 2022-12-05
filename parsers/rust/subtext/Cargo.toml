@@ -1,6 +1,6 @@
 [package]
 name = "subtext"
-version = "0.3.0"
+version = "0.3.1"
 description = "A parser for the Subtext file format"
 license = "Apache-2.0"
 edition = "2021"
