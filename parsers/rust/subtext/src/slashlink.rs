@@ -2,7 +2,7 @@ use anyhow::anyhow;
 use std::{fmt::Display, str::FromStr};
 
 /// The various forms that the "peer" part of a slashlink may take
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Peer {
     Name(String),
     Did(String),
@@ -15,7 +15,7 @@ pub enum Peer {
 /// parts, the link would look like: `@cdata/foo`.
 ///
 /// This struct makes it easier to parse a slashlink from a string.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Slashlink {
     pub peer: Peer,
     pub slug: Option<String>,
