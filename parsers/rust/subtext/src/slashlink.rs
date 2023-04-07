@@ -4,7 +4,7 @@ use std::{fmt::Display, str::FromStr};
 /// The various forms that the "peer" part of a slashlink may take
 #[derive(Debug, PartialEq, Clone)]
 pub enum Peer {
-    Name(String),
+    Name(Vec<String>),
     Did(String),
     None,
 }
@@ -54,7 +54,7 @@ impl FromStr for Slashlink {
         let peer = if raw_peer.len() > 0 {
             match raw_peer[0..4].to_lowercase().as_str() {
                 "did:" => Peer::Did(raw_peer),
-                _ => Peer::Name(raw_peer),
+                _ => Peer::Name(raw_peer.split('.').map(|s| s.to_owned()).collect()),
             }
         } else {
             Peer::None
@@ -71,7 +71,7 @@ impl FromStr for Slashlink {
 impl Display for Slashlink {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self.peer {
-            Peer::Name(name) => write!(f, "@{}", name),
+            Peer::Name(names) => write!(f, "@{}", names.join(".")),
             Peer::Did(did) => write!(f, "@{}", did),
             Peer::None => Ok(()),
         }?;
@@ -103,13 +103,9 @@ mod tests {
     fn it_can_parse_a_basic_slashlink_with_a_peer_name() {
         let slashlink = Slashlink::from_str("@cdata/foo-bar").unwrap();
 
-        assert_eq!(slashlink.peer, Peer::Name("cdata".into()));
+        assert_eq!(slashlink.peer, Peer::Name(vec!["cdata".into()]));
         assert_eq!(slashlink.slug, Some("foo-bar".into()));
     }
-
-    #[test]
-    #[ignore = "TODO(subconsciousnetwork/subtext#36)"]
-    fn it_can_parse_a_slashlink_that_is_a_cid() {}
 
     #[test]
     fn it_can_parse_a_slashlink_with_a_peer_did() {
@@ -119,9 +115,40 @@ mod tests {
     }
 
     #[test]
+    fn it_can_parse_a_slashlink_with_a_peer_name_chain() {
+        let slashlink = Slashlink::from_str("@jordan.gordon.morgon/foo-bar").unwrap();
+
+        assert_eq!(
+            slashlink.peer,
+            Peer::Name(vec!["jordan".into(), "gordon".into(), "morgon".into()])
+        );
+        assert_eq!(slashlink.slug, Some("foo-bar".into()));
+    }
+
+    #[test]
     fn it_can_parse_a_slashlink_with_only_a_peer() {
         let slashlink = Slashlink::from_str("@cdata").unwrap();
-        assert_eq!(slashlink.peer, Peer::Name("cdata".into()));
+        assert_eq!(slashlink.peer, Peer::Name(vec!["cdata".into()]));
+        assert_eq!(slashlink.slug, None);
+    }
+
+    #[test]
+    fn it_can_parse_a_slashlink_with_only_a_peer_did() {
+        let slashlink = Slashlink::from_str("@did:test:alice").unwrap();
+
+        assert_eq!(slashlink.peer, Peer::Did("did:test:alice".into()));
+        assert_eq!(slashlink.slug, None);
+    }
+
+    #[test]
+    fn it_can_parse_a_slashlink_with_only_a_peer_name_chain() {
+        let slashlink = Slashlink::from_str("@jordan.gordon.morgon").unwrap();
+
+        assert_eq!(
+            slashlink.peer,
+            Peer::Name(vec!["jordan".into(), "gordon".into(), "morgon".into()])
+        );
+        assert_eq!(slashlink.slug, None);
     }
 
     #[test]
@@ -132,4 +159,8 @@ mod tests {
             assert!(Slashlink::from_str(test_case).is_err())
         }
     }
+
+    #[test]
+    #[ignore = "TODO(subconsciousnetwork/subtext#36)"]
+    fn it_can_parse_a_slashlink_that_is_a_cid() {}
 }
