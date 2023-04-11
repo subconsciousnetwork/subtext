@@ -52,9 +52,10 @@ impl FromStr for Slashlink {
         }
 
         let peer = if raw_peer.len() > 0 {
-            match raw_peer[0..4].to_lowercase().as_str() {
-                "did:" => Peer::Did(raw_peer),
-                _ => Peer::Name(raw_peer.split('.').map(|s| s.to_owned()).collect()),
+            if raw_peer.starts_with("did:") {
+                Peer::Did(raw_peer)
+            } else {
+                Peer::Name(raw_peer.split('.').map(|s| s.to_owned()).collect())
             }
         } else {
             Peer::None
@@ -96,6 +97,14 @@ mod tests {
         let slashlink = Slashlink::from_str("/foo-bar").unwrap();
 
         assert_eq!(slashlink.peer, Peer::None);
+        assert_eq!(slashlink.slug, Some("foo-bar".into()));
+    }
+
+    #[test]
+    fn it_can_parse_a_basic_slashlink_with_a_short_peer_name() {
+        let slashlink = Slashlink::from_str("@ben/foo-bar").unwrap();
+
+        assert_eq!(slashlink.peer, Peer::Name(vec!["ben".into()]));
         assert_eq!(slashlink.slug, Some("foo-bar".into()));
     }
 
