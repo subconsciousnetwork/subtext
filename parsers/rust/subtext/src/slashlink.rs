@@ -52,9 +52,10 @@ impl FromStr for Slashlink {
         }
 
         let peer = if raw_peer.len() > 0 {
-            match raw_peer[0..4].to_lowercase().as_str() {
-                "did:" => Peer::Did(raw_peer),
-                _ => Peer::Name(raw_peer.split('.').map(|s| s.to_owned()).collect()),
+            if raw_peer.starts_with("did:") {
+                Peer::Did(raw_peer)
+            } else {
+                Peer::Name(raw_peer.split('.').map(|s| s.to_owned()).collect())
             }
         } else {
             Peer::None
