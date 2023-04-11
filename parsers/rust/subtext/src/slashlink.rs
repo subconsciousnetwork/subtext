@@ -100,6 +100,14 @@ mod tests {
     }
 
     #[test]
+    fn it_can_parse_a_basic_slashlink_with_a_short_peer_name() {
+        let slashlink = Slashlink::from_str("@ben/foo-bar").unwrap();
+
+        assert_eq!(slashlink.peer, Peer::Name(vec!["ben".into()]));
+        assert_eq!(slashlink.slug, Some("foo-bar".into()));
+    }
+
+    #[test]
     fn it_can_parse_a_basic_slashlink_with_a_peer_name() {
         let slashlink = Slashlink::from_str("@cdata/foo-bar").unwrap();
 
