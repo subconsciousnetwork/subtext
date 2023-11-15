@@ -1,9 +1,9 @@
 use anyhow::{anyhow, Result};
-use async_compat::CompatExt;
 use async_stream::try_stream;
 use async_utf8_decoder::Utf8Decoder;
 use futures::{Stream, StreamExt};
 use tokio::io::AsyncRead;
+use tokio_util::compat::TokioAsyncReadCompatExt;
 
 use crate::{block::Block, parse, primitive::Entity};
 
@@ -56,9 +56,9 @@ where
 
 #[cfg(test)]
 mod tests {
-    use async_compat::CompatExt;
-    use futures::{channel::mpsc, io, SinkExt};
-    use futures::{pin_mut, StreamExt, TryStream, TryStreamExt};
+    use futures::{channel::mpsc, SinkExt};
+    use futures::{pin_mut, StreamExt, TryStreamExt};
+    use tokio_util::compat::{FuturesAsyncReadCompatExt};
 
     use crate::block::Block;
     use crate::primitive::Entity;
